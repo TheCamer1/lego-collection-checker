@@ -1,0 +1,15 @@
+C:\Code\Personal Projects\LegoCollectionChecker\LegoCollectionChecker\bin\Debug\net6.0\LegoCollectionChecker.exe
+C:\Code\Personal Projects\LegoCollectionChecker\LegoCollectionChecker\bin\Debug\net6.0\LegoCollectionChecker.deps.json
+C:\Code\Personal Projects\LegoCollectionChecker\LegoCollectionChecker\bin\Debug\net6.0\LegoCollectionChecker.runtimeconfig.json
+C:\Code\Personal Projects\LegoCollectionChecker\LegoCollectionChecker\bin\Debug\net6.0\LegoCollectionChecker.dll
+C:\Code\Personal Projects\LegoCollectionChecker\LegoCollectionChecker\bin\Debug\net6.0\LegoCollectionChecker.pdb
+C:\Code\Personal Projects\LegoCollectionChecker\LegoCollectionChecker\obj\Debug\net6.0\LegoCollectionChecker.csproj.AssemblyReference.cache
+C:\Code\Personal Projects\LegoCollectionChecker\LegoCollectionChecker\obj\Debug\net6.0\LegoCollectionChecker.GeneratedMSBuildEditorConfig.editorconfig
+C:\Code\Personal Projects\LegoCollectionChecker\LegoCollectionChecker\obj\Debug\net6.0\LegoCollectionChecker.AssemblyInfoInputs.cache
+C:\Code\Personal Projects\LegoCollectionChecker\LegoCollectionChecker\obj\Debug\net6.0\LegoCollectionChecker.AssemblyInfo.cs
+C:\Code\Personal Projects\LegoCollectionChecker\LegoCollectionChecker\obj\Debug\net6.0\LegoCollectionChecker.csproj.CoreCompileInputs.cache
+C:\Code\Personal Projects\LegoCollectionChecker\LegoCollectionChecker\obj\Debug\net6.0\LegoCollectionChecker.dll
+C:\Code\Personal Projects\LegoCollectionChecker\LegoCollectionChecker\obj\Debug\net6.0\refint\LegoCollectionChecker.dll
+C:\Code\Personal Projects\LegoCollectionChecker\LegoCollectionChecker\obj\Debug\net6.0\LegoCollectionChecker.pdb
+C:\Code\Personal Projects\LegoCollectionChecker\LegoCollectionChecker\obj\Debug\net6.0\LegoCollectionChecker.genruntimeconfig.cache
+C:\Code\Personal Projects\LegoCollectionChecker\LegoCollectionChecker\obj\Debug\net6.0\ref\LegoCollectionChecker.dll
