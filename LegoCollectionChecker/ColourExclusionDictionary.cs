@@ -1,6 +1,6 @@
 ﻿namespace LegoCollectionChecker
 {
-    public class ExclusionDictionary
+    public class ColourExclusionDictionary
     {
         public static List<string> ExclusionIds = new()
         {
@@ -77,7 +77,8 @@
             "3614a",
             "4265c",
             "44302b",
-            "44567b"
+            "44567b",
+            "59349"
         };
     }
 }

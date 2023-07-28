@@ -4,6 +4,16 @@ namespace LegoCollectionChecker;
 
 public static class MissingPieceGenerator
 {
+    public static readonly List<string> _disallowedColours = new()
+    {
+        "Red",
+        "Blue",
+        "Yellow",
+        "Lime",
+        "Dark Purple",
+        "Lavendar"
+    };
+
     public static void GenerateMissingPieces()
     {
         var completeCollection = CollectionLoader.LoadCollection("../../../CompleteCollection.xml");
@@ -56,15 +66,9 @@ public static class MissingPieceGenerator
     private static bool ShouldExcludePiece(LegoPiece piece)
     {
         var colorDict = ColourDictionary.ColorNameToId;
-        var disallowedColours = new List<string>
-        {
-            "Red",
-            "Blue",
-            "Yellow",
-            "Lime"
-        };
-        if (ExclusionDictionary.ExclusionIds.Contains(piece.ItemId)
-            && (disallowedColours.Select(e => ColourDictionary.ColorNameToId[e]).Contains(piece.Color)))
+        
+        if (ColourExclusionDictionary.ExclusionIds.Contains(piece.ItemId)
+            && (_disallowedColours.Select(e => ColourDictionary.ColorNameToId[e]).Contains(piece.Color)))
         {
             return true;
         }

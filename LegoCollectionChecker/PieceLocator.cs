@@ -4,7 +4,7 @@ namespace LegoCollectionChecker;
 
 internal static class PieceLocator
 {
-    public static void CheckPiece(string itemId, string colorName)
+    public static void CheckPiece(string itemId, string colorName, bool ignoreColour = false)
     {
         if (!ColourDictionary.ColorNameToId.TryGetValue(colorName, out var colorId))
         {
@@ -12,7 +12,7 @@ internal static class PieceLocator
             return;
         }
 
-        bool isColorInvariant = ColourInvariantDictionary.InvariantIds.Contains(itemId);
+        bool isColorInvariant = ignoreColour || ColourInvariantDictionary.InvariantIds.Contains(itemId);
         Console.WriteLine($"Piece {itemId} in {colorName}");
         Console.WriteLine();
         var completeAmount = DisplayModelAmounts(itemId, colorName, colorId, isColorInvariant, true);
