@@ -24,6 +24,7 @@ internal static class AlternativeDictionary
         new List<string> { "553b", "553", "553c", "553a", "3262" },
         new List<string> { "6538b", "6538", "6538a", "6538c" },
         new List<string> { "6538c", "6538", "6538a", "6538b" },
+        new List<string> { "4589", "4589b" }
     }; 
     
     public static List<string> GetAlternativeItemIds(string itemId)

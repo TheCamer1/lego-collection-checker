@@ -4,7 +4,7 @@ class Program
 {
     static void Main()
     {
-        PieceLocator.CheckPiece("44567a", "Light Bluish Gray");
+        PieceLocator.CheckPiece("62462", "Light Bluish Gray");
         //MissingPieceGenerator.GenerateMissingPieces();
     }
 }
