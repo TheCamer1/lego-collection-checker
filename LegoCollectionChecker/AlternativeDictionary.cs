@@ -1,4 +1,6 @@
-﻿internal static class AlternativeDictionary
+﻿namespace LegoCollectionChecker;
+
+internal static class AlternativeDictionary
 {
     public static List<List<string>> AlternativeItemIds = new List<List<string>>()
     {
@@ -16,7 +18,7 @@
         new List<string> { "44301b", "44301", "44301a" },
         new List<string> { "44302b", "44302", "44302a", "54657" },
         new List<string> { "44375a", "44375", "44375b" },
-        new List<string> { "44567a", "44567", "44567ab" },
+        new List<string> { "44567a", "44567", "44567b" },
         new List<string> { "4460b", "4460a", "4460" },
         new List<string> { "4865b", "4865" },
         new List<string> { "553b", "553", "553c", "553a", "3262" },

@@ -1,67 +1,51 @@
 ﻿using System.Xml.Linq;
 
-internal static class MissingPieceGenerator
+namespace LegoCollectionChecker;
+
+public static class MissingPieceGenerator
 {
     public static void GenerateMissingPieces()
     {
-        // Load the complete collection
         var completeCollection = CollectionLoader.LoadCollection("../../../CompleteCollection.xml");
 
-        // Process completed models
+        // process completed models
         foreach (var file in Directory.GetFiles("../../../CompletedModels", "*.xml"))
         {
             var modelPieces = CollectionLoader.LoadCollection(file);
-            foreach (var piece in modelPieces)
+            foreach (var piece in modelPieces.Values)
             {
-                if (completeCollection.ContainsKey(piece.Key))
-                {
-                    completeCollection[piece.Key] -= piece.Value;
-                    if (completeCollection[piece.Key] <= 0)
-                    {
-                        completeCollection.Remove(piece.Key);
-                    }
-                }
+                UsePieceInCollection(piece, completeCollection);
             }
         }
 
         // Process incomplete models and find missing pieces
-        var missingPieces = new Dictionary<string, int>();
+        var missingPieces = new Dictionary<string, LegoPiece>();
         foreach (var file in Directory.GetFiles("../../../IncompleteModels", "*.xml"))
         {
             var modelPieces = CollectionLoader.LoadCollection(file);
-            foreach (var piece in modelPieces)
+            foreach (var piece in modelPieces.Values)
             {
-                if (completeCollection.ContainsKey(piece.Key))
-                {
-                    var availableQty = completeCollection[piece.Key];
-                    if (availableQty < piece.Value)
-                    {
-                        AddToMissingPieces(missingPieces, piece.Key, piece.Value - availableQty);
-                    }
+                var availableQty = GetTotalAvailableQty(piece, completeCollection);
 
-                    completeCollection[piece.Key] -= piece.Value;
-                    if (completeCollection[piece.Key] <= 0)
-                    {
-                        completeCollection.Remove(piece.Key);
-                    }
-                }
-                else
+                if (availableQty < piece.Quantity)
                 {
-                    AddToMissingPieces(missingPieces, piece.Key, piece.Value);
+                    AddToMissingPieces(missingPieces, piece, piece.Quantity - availableQty);
                 }
+
+                UsePieceInCollection(piece, completeCollection);
             }
         }
 
         // Generate the missing pieces XML
         var inventory = new XElement("INVENTORY",
-            from piece in missingPieces
-            let splitKey = piece.Key.Split(':')
+            from piece in missingPieces.Values
+            where !ShouldExcludePiece(piece)
             select new XElement("ITEM",
-                new XElement("ITEMTYPE", splitKey[0]),
-                new XElement("ITEMID", splitKey[1]),
-                new XElement("COLOR", splitKey[2]),
+                new XElement("ITEMTYPE", piece.ItemType),
+                new XElement("ITEMID", piece.ItemId),
+                new XElement("COLOR", piece.Color),
                 new XElement("MAXPRICE", "-1.0000"),
-                new XElement("MINQTY", piece.Value),
+                new XElement("MINQTY", piece.Quantity),
                 new XElement("CONDITION", "X"),
                 new XElement("NOTIFY", "N")));
 
@@ -69,15 +53,99 @@ internal static class MissingPieceGenerator
         doc.Save("../../../MissingPieces.xml");
     }
 
-    private static void AddToMissingPieces(Dictionary<string, int> missingPieces, string key, int amount)
+    private static bool ShouldExcludePiece(LegoPiece piece)
     {
-        if (missingPieces.ContainsKey(key))
+        var colorDict = ColourDictionary.ColorNameToId;
+        var disallowedColours = new List<string>
         {
-            missingPieces[key] += amount;
+            "Red",
+            "Blue",
+            "Yellow",
+            "Lime"
+        };
+        if (ExclusionDictionary.ExclusionIds.Contains(piece.ItemId)
+            && (disallowedColours.Select(e => ColourDictionary.ColorNameToId[e]).Contains(piece.Color)))
+        {
+            return true;
+        }
+        return false;
+    }
+
+    private static void UsePieceInCollection(LegoPiece piece, Dictionary<string, LegoPiece> collection)
+    {
+        var alternativeIds = AlternativeDictionary.GetAlternativeItemIds(piece.ItemId);
+
+        foreach (var altId in alternativeIds)
+        {
+            var keyToFind = new LegoPiece("P", altId, piece.Color, 0).GetKey();
+
+            if (collection.ContainsKey(keyToFind))
+            {
+                var usageQty = Math.Min(collection[keyToFind].Quantity, piece.Quantity);
+
+                collection[keyToFind].Quantity -= usageQty;
+                piece.Quantity -= usageQty;
+
+                if (collection[keyToFind].Quantity <= 0)
+                {
+                    collection.Remove(keyToFind);
+                }
+
+                if (piece.Quantity <= 0)
+                {
+                    break;
+                }
+            }
+        }
+    }
+
+    private static int GetTotalAvailableQty(LegoPiece piece, Dictionary<string, LegoPiece> collection)
+    {
+        var alternativeIds = AlternativeDictionary.GetAlternativeItemIds(piece.ItemId);
+        int availableQty = 0;
+
+        if (ColourInvariantDictionary.InvariantIds.Contains(piece.ItemId))
+        {
+            foreach (var key in collection.Keys)
+            {
+                var currentPiece = collection[key];
+                if (alternativeIds.Contains(currentPiece.ItemId))
+                {
+                    availableQty += currentPiece.Quantity;
+                }
+            }
         }
         else
         {
-            missingPieces.Add(key, amount);
+            foreach (var altId in alternativeIds)
+            {
+                var keyToFind = new LegoPiece("P", altId, piece.Color, 0).GetKey();
+
+                if (collection.ContainsKey(keyToFind))
+                {
+                    availableQty += collection[keyToFind].Quantity;
+                }
+            }
+        }
+
+        return availableQty;
+    }
+
+    private static void AddToMissingPieces(Dictionary<string, LegoPiece> missingPieces, LegoPiece piece, int amount)
+    {
+        var key = piece.GetKey();
+        if (ColourInvariantDictionary.InvariantIds.Contains(piece.ItemId))
+        {
+            key = $"P:{piece.ItemId}";
+        }
+
+        if (missingPieces.ContainsKey(key))
+        {
+            missingPieces[key].Quantity += amount;
+        }
+        else
+        {
+            missingPieces[key] = new LegoPiece(piece.ItemType, piece.ItemId, piece.Color, amount);
         }
     }
 }

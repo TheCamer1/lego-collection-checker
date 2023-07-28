@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Code\\Personal Projects\\LegoCollectionChecker\\LegoCollectionChecker\\LegoCollectionChecker.csproj": {}
+    "C:\\Code\\Personal Projects\\lego-collection-checker\\LegoCollectionChecker\\LegoCollectionChecker.csproj": {}
   },
   "projects": {
-    "C:\\Code\\Personal Projects\\LegoCollectionChecker\\LegoCollectionChecker\\LegoCollectionChecker.csproj": {
+    "C:\\Code\\Personal Projects\\lego-collection-checker\\LegoCollectionChecker\\LegoCollectionChecker.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Code\\Personal Projects\\LegoCollectionChecker\\LegoCollectionChecker\\LegoCollectionChecker.csproj",
+        "projectUniqueName": "C:\\Code\\Personal Projects\\lego-collection-checker\\LegoCollectionChecker\\LegoCollectionChecker.csproj",
         "projectName": "LegoCollectionChecker",
-        "projectPath": "C:\\Code\\Personal Projects\\LegoCollectionChecker\\LegoCollectionChecker\\LegoCollectionChecker.csproj",
+        "projectPath": "C:\\Code\\Personal Projects\\lego-collection-checker\\LegoCollectionChecker\\LegoCollectionChecker.csproj",
         "packagesPath": "C:\\Users\\Cam\\.nuget\\packages\\",
-        "outputPath": "C:\\Code\\Personal Projects\\LegoCollectionChecker\\LegoCollectionChecker\\obj\\",
+        "outputPath": "C:\\Code\\Personal Projects\\lego-collection-checker\\LegoCollectionChecker\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Cam\\AppData\\Roaming\\NuGet\\NuGet.Config",

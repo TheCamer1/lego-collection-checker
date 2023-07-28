@@ -8,4 +8,4 @@ build_property.PlatformNeutralAssembly =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = LegoCollectionChecker
-build_property.ProjectDir = C:\Code\Personal Projects\LegoCollectionChecker\LegoCollectionChecker\
+build_property.ProjectDir = C:\Code\Personal Projects\lego-collection-checker\LegoCollectionChecker\

@@ -1,8 +1,10 @@
-﻿class Program
+﻿namespace LegoCollectionChecker;
+
+class Program
 {
     static void Main()
     {
-        PieceLocator.CheckPiece("15573", "Red");
-        MissingPieceGenerator.GenerateMissingPieces();
+        PieceLocator.CheckPiece("44567a", "Light Bluish Gray");
+        //MissingPieceGenerator.GenerateMissingPieces();
     }
 }

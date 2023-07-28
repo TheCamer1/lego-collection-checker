@@ -1,28 +1,32 @@
 ﻿using System.Xml.Linq;
 
-internal static class CollectionLoader
+namespace LegoCollectionChecker;
+
+public static class CollectionLoader
 {
-    public static Dictionary<string, int> LoadCollection(string filename)
+    public static Dictionary<string, LegoPiece> LoadCollection(string filename)
     {
         var doc = XDocument.Load(filename);
 
-        var collection = new Dictionary<string, int>();
+        var collection = new Dictionary<string, LegoPiece>();
         foreach (var item in doc.Root.Elements("ITEM"))
         {
-            var itemType = item.Element("ITEMTYPE")?.Value ?? "";
-            var itemId = item.Element("ITEMID")?.Value ?? "";
-            var color = item.Element("COLOR")?.Value ?? "";
-            var qty = int.Parse(item.Element("MINQTY")?.Value ?? "0");
+            var piece = new LegoPiece(
+                item.Element("ITEMTYPE")?.Value ?? "",
+                item.Element("ITEMID")?.Value ?? "",
+                item.Element("COLOR")?.Value ?? "",
+                int.Parse(item.Element("MINQTY")?.Value ?? "0")
+            );
 
-            var key = $"{itemType}:{itemId}:{color}";
+            var key = piece.GetKey();
 
             if (collection.ContainsKey(key))
             {
-                collection[key] += qty;
+                collection[key].Quantity += piece.Quantity;
             }
             else
             {
-                collection[key] = qty;
+                collection[key] = piece;
             }
         }
 
