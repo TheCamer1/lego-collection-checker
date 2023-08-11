@@ -14,7 +14,7 @@ public static class CollectionLoader
             var piece = new LegoPiece(
                 item.Element("ITEMTYPE")?.Value ?? "",
                 item.Element("ITEMID")?.Value ?? "",
-                item.Element("COLOR")?.Value ?? "",
+                int.Parse(item.Element("COLOR")?.Value ?? "23"),
                 int.Parse(item.Element("MINQTY")?.Value ?? "0")
             );
 

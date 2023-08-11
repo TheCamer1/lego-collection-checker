@@ -2,7 +2,7 @@
 {
     public class ColourInvariantDictionary
     {
-        public static List<string> InvariantIds = new()
+        public static HashSet<string> InvariantIds = new()
         {
             "3737",
             "3737b",
@@ -651,7 +651,14 @@
             "73109",
             "32333",
             "2744",
-            "2743"
+            "2743",
+            "87087",
+            "87580",
+            "99206",
+            "99207",
+            "99780",
+            "99781",
+            "44728"
         };
     }
 }

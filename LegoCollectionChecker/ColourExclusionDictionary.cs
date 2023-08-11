@@ -2,7 +2,7 @@
 {
     public class ColourExclusionDictionary
     {
-        public static List<string> ExclusionIds = new()
+        public static HashSet<string> ExclusionIds = new()
         {
             "44",
             "2357",
