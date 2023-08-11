@@ -15,9 +15,9 @@ internal static class PieceLocator
         bool isColorInvariant = ignoreColour || ColourInvariantDictionary.InvariantIds.Contains(itemId);
         Console.WriteLine($"Piece {itemId} in {colorName}");
         Console.WriteLine();
-        var completeAmount = DisplayModelAmounts(itemId, colorName, colorId, isColorInvariant, true);
+        var completeAmount = DisplayModelAmounts(itemId, colorId, isColorInvariant, true);
         Console.WriteLine();
-        var incompleteAmount = DisplayModelAmounts(itemId, colorName, colorId, isColorInvariant, false);
+        var incompleteAmount = DisplayModelAmounts(itemId, colorId, isColorInvariant, false);
         Console.WriteLine();
         var collectionAmount = DisplayCompleteCollectionAmounts(itemId, colorName, colorId, isColorInvariant);
 
@@ -40,7 +40,7 @@ internal static class PieceLocator
         }
     }
 
-    private static int DisplayCompleteCollectionAmounts(string itemId, string colorName, string colorId, bool isColorInvariant)
+    private static int DisplayCompleteCollectionAmounts(string itemId, string colorName, int colorId, bool isColorInvariant)
     {
         // Load the complete collection
         var completeCollection = CollectionLoader.LoadCollection("../../../CompleteCollection.xml");
@@ -63,7 +63,7 @@ internal static class PieceLocator
         return totalQuantitiesInCollection.Values.Sum();
     }
 
-    private static int DisplayModelAmounts(string itemId, string colorName, string colorId, bool isColorInvariant, bool isComplete)
+    private static int DisplayModelAmounts(string itemId, int colorId, bool isColorInvariant, bool isComplete)
     {
         var alternativeIds = AlternativeDictionary.GetAlternativeItemIds(itemId);
         var models = ListModelsContainingPiece(itemId, $"../../../{(isComplete ? "Completed" : "Incomplete")}Models");
@@ -102,10 +102,10 @@ internal static class PieceLocator
         return totalInModels;
     }
 
-    private static Dictionary<string, int> CalculateTotalQuantity(string itemId, Dictionary<string, LegoPiece> completeCollection, bool isColorInvariant, string colorId)
+    private static Dictionary<int, int> CalculateTotalQuantity(string itemId, Dictionary<string, LegoPiece> completeCollection, bool isColorInvariant, int colorId)
     {
         var alternativeIds = AlternativeDictionary.GetAlternativeItemIds(itemId);
-        var totalQuantities = new Dictionary<string, int>();
+        var totalQuantities = new Dictionary<int, int>();
 
         foreach (var altId in alternativeIds)
         {

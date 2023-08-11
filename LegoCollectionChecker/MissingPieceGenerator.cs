@@ -66,6 +66,11 @@ public static class MissingPieceGenerator
     private static bool ShouldExcludePiece(LegoPiece piece)
     {
         var colorDict = ColourDictionary.ColorNameToId;
+
+        if (PieceExclusionDictionary.ExclusionIds.Contains(piece.GetKey()))
+        {
+            return true;
+        }
         
         if (ColourExclusionDictionary.ExclusionIds.Contains(piece.ItemId)
             && (_disallowedColours.Select(e => ColourDictionary.ColorNameToId[e]).Contains(piece.Color)))
