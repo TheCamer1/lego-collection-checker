@@ -1,7 +1,10 @@
 ﻿namespace LegoCollectionChecker
 {
-    public class ColourExclusionDictionary
+    public static class ColourExclusionDictionary
     {
+        // This lists pieces that will be excluded from the missing pieces
+        // if in the disallowed colours
+        // Not currently in use, will just exclude those colours
         public static HashSet<string> ExclusionIds = new()
         {
             "44",
@@ -78,7 +81,8 @@
             "4265c",
             "44302b",
             "44567b",
-            "59349"
+            "59349",
+            "11211"
         };
     }
 }

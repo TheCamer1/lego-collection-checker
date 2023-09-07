@@ -6,11 +6,13 @@ internal static class PieceLocator
 {
     public static void CheckPiece(string itemId, string colorName, bool ignoreColour = false)
     {
-        if (!ColourDictionary.ColorNameToId.TryGetValue(colorName, out var colorId))
+        var colourMap = new ColourMap();
+        if (!colourMap.ContainsColour(colorName))
         {
             Console.WriteLine($"Unknown color name: {colorName}");
             return;
         }
+        var colorId = colourMap.GetIdByName(colorName)!.Value;
 
         bool isColorInvariant = ignoreColour || ColourInvariantDictionary.InvariantIds.Contains(itemId);
         Console.WriteLine($"Piece {itemId} in {colorName}");
@@ -42,6 +44,7 @@ internal static class PieceLocator
 
     private static int DisplayCompleteCollectionAmounts(string itemId, string colorName, int colorId, bool isColorInvariant)
     {
+        var colourMap = new ColourMap();
         // Load the complete collection
         var completeCollection = CollectionLoader.LoadCollection("../../../CompleteCollection.xml");
         // Get the total quantity in the complete collection
@@ -51,7 +54,7 @@ internal static class PieceLocator
         {
             foreach (var entry in totalQuantitiesInCollection)
             {
-                var colorNameFromId = ColourDictionary.ColorIdToName.ContainsKey(entry.Key) ? ColourDictionary.ColorIdToName[entry.Key] : "Unknown color";
+                var colorNameFromId = colourMap.GetNameById(entry.Key) ?? "Unknown color";
                 Console.WriteLine($"{colorNameFromId}: {entry.Value}");
             }
             Console.WriteLine($"Collection Total: {totalQuantitiesInCollection.Values.Sum()}");
@@ -65,6 +68,7 @@ internal static class PieceLocator
 
     private static int DisplayModelAmounts(string itemId, int colorId, bool isColorInvariant, bool isComplete)
     {
+        var colourMap = new ColourMap();
         var alternativeIds = AlternativeDictionary.GetAlternativeItemIds(itemId);
         var models = ListModelsContainingPiece(itemId, $"../../../{(isComplete ? "Completed" : "Incomplete")}Models");
         Console.WriteLine($"{(isComplete ? "Complete" : "Incomplete")}:");
@@ -78,9 +82,7 @@ internal static class PieceLocator
                 // Check whether the ItemId of the current piece matches the original ItemId or any of its alternative Ids
                 if (alternativeIds.Contains(piece.ItemId) && (piece.Color == colorId || isColorInvariant))
                 {
-                    var pieceColorName = ColourDictionary.ColorIdToName.ContainsKey(piece.Color)
-                        ? ColourDictionary.ColorIdToName[piece.Color]
-                        : "Unknown color";
+                    var pieceColorName = colourMap.GetNameById(piece.Color) ?? "Unknown color";
                     colorQuantities.Append($"{pieceColorName}: {piece.Quantity}, ");
                     totalInModels += piece.Quantity;
                     modelQuantity += piece.Quantity;

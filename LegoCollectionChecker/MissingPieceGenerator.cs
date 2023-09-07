@@ -65,15 +65,18 @@ public static class MissingPieceGenerator
 
     private static bool ShouldExcludePiece(LegoPiece piece)
     {
-        var colorDict = ColourDictionary.ColorNameToId;
-
+        var colourMap = new ColourMap();
         if (PieceExclusionDictionary.ExclusionIds.Contains(piece.GetKey()))
         {
             return true;
         }
-        
-        if (ColourExclusionDictionary.ExclusionIds.Contains(piece.ItemId)
-            && (_disallowedColours.Select(e => ColourDictionary.ColorNameToId[e]).Contains(piece.Color)))
+        if (PieceExclusionDictionary.ExclusionCodes.Contains(piece.ItemId))
+        {
+            return true;
+        }
+
+        if (//ColourExclusionDictionary.ExclusionIds.Contains(piece.ItemId) &&
+            _disallowedColours.Select(e => colourMap.GetIdByName(e)).Contains(piece.Color))
         {
             return true;
         }

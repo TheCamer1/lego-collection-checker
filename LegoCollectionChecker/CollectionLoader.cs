@@ -9,7 +9,7 @@ public static class CollectionLoader
         var doc = XDocument.Load(filename);
 
         var collection = new Dictionary<string, LegoPiece>();
-        foreach (var item in doc.Root.Elements("ITEM"))
+        foreach (var item in doc.Root!.Elements("ITEM"))
         {
             var piece = new LegoPiece(
                 item.Element("ITEMTYPE")?.Value ?? "",
