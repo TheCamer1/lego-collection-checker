@@ -1,6 +1,6 @@
 ﻿namespace LegoCollectionChecker;
 
-public enum ColourEnum : byte
+public enum Colour : byte
 {
     White = 1,
     VeryLightGray = 49,

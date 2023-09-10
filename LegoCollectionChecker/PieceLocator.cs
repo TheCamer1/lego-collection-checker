@@ -4,24 +4,25 @@ namespace LegoCollectionChecker;
 
 internal static class PieceLocator
 {
-    public static void CheckPiece(string itemId, string colorName, bool ignoreColour = false)
+    public static void CheckPiece(string itemId, Colour color, bool ignoreColour = false)
     {
         var colourMap = new ColourMap();
-        if (!colourMap.ContainsColour(colorName))
+        if (!colourMap.ContainsColour(color))
         {
-            Console.WriteLine($"Unknown colour name: {colorName}");
+            Console.WriteLine($"Unknown colour name: {color}");
             return;
         }
-        var colorId = colourMap.GetIdByName(colorName)!.Value;
+        var colorId = colourMap.GetIdByEnum(color)!.Value;
+        var name = colourMap.GetNameByEnum(color);
 
         bool isColorInvariant = ignoreColour || ColourInvariantDictionary.InvariantIds.Contains(itemId);
-        Console.WriteLine($"Piece {itemId} in {colorName}");
+        Console.WriteLine($"Piece {itemId} in {color}");
         Console.WriteLine();
         var completeAmounts = DisplayModelAmounts(itemId, colorId, isColorInvariant, true);
         Console.WriteLine();
         var incompleteAmounts = DisplayModelAmounts(itemId, colorId, isColorInvariant, false);
         Console.WriteLine();
-        var collectionAmounts = DisplayCompleteCollectionAmounts(itemId, colorName, colorId, isColorInvariant);
+        var collectionAmounts = DisplayCompleteCollectionAmounts(itemId, name!, colorId, isColorInvariant);
 
         Console.WriteLine();
         if (isColorInvariant)
@@ -56,26 +57,45 @@ internal static class PieceLocator
 
     private static void PrintMissingByColour(ColourMap colourMap, Dictionary<int, int> completeAmounts, Dictionary<int, int> incompleteAmounts, Dictionary<int, int> collectionAmounts)
     {
+        // First, print missing pieces:
         foreach (var colour in collectionAmounts.Keys)
         {
-            var excessAmount = collectionAmounts[colour] - (incompleteAmounts.ContainsKey(colour) ? incompleteAmounts[colour] : 0) - (completeAmounts.ContainsKey(colour) ? completeAmounts[colour] : 0);
+            var excessAmount = collectionAmounts[colour]
+                             - (incompleteAmounts.ContainsKey(colour) ? incompleteAmounts[colour] : 0)
+                             - (completeAmounts.ContainsKey(colour) ? completeAmounts[colour] : 0);
             var colourNameForOutput = colourMap.GetNameById(colour) ?? "Unknown colour";
+
+            if (excessAmount < 0)
+            {
+                Console.WriteLine($"{colourNameForOutput} Missing: {-excessAmount}");
+            }
+        }
+
+        // Then, print excess pieces:
+        foreach (var colour in collectionAmounts.Keys)
+        {
+            var excessAmount = collectionAmounts[colour]
+                             - (incompleteAmounts.ContainsKey(colour) ? incompleteAmounts[colour] : 0)
+                             - (completeAmounts.ContainsKey(colour) ? completeAmounts[colour] : 0);
+            var colourNameForOutput = colourMap.GetNameById(colour) ?? "Unknown colour";
+
             if (excessAmount > 0)
             {
                 Console.WriteLine($"{colourNameForOutput} Excess: {excessAmount}");
             }
-            else
+        }
+
+        // Finally, print "None Used":
+        foreach (var colour in collectionAmounts.Keys)
+        {
+            var colourNameForOutput = colourMap.GetNameById(colour) ?? "Unknown colour";
+
+            if (!incompleteAmounts.ContainsKey(colour))
             {
-                if (!incompleteAmounts.ContainsKey(colour) || incompleteAmounts[colour] == 0)
-                {
-                    Console.WriteLine($"{colourNameForOutput} None left, but no incomplete models require them ({-excessAmount} is the result)");
-                }
-                else
-                {
-                    Console.WriteLine($"{colourNameForOutput} Missing: {-excessAmount}");
-                }
+                Console.WriteLine($"{colourNameForOutput}: None Used");
             }
         }
+
     }
 
     private static Dictionary<int, int> DisplayCompleteCollectionAmounts(string itemId, string colorName, int colorId, bool isColorInvariant)
