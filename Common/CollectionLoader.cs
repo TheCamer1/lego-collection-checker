@@ -1,6 +1,6 @@
 ﻿using System.Xml.Linq;
 
-namespace LegoCollectionChecker;
+namespace LegoCollectionChecker.Common;
 
 public static class CollectionLoader
 {
@@ -11,11 +11,14 @@ public static class CollectionLoader
         var collection = new Dictionary<string, LegoPiece>();
         foreach (var item in doc.Root!.Elements("ITEM"))
         {
+            var haveQuantity = item.Element("QTYFILLED") != null ? 
+                int.Parse(item.Element("QTYFILLED")?.Value!) : (int?)null;
             var piece = new LegoPiece(
                 item.Element("ITEMTYPE")?.Value ?? "",
                 item.Element("ITEMID")?.Value ?? "",
                 int.Parse(item.Element("COLOR")?.Value ?? "23"),
-                int.Parse(item.Element("MINQTY")?.Value ?? "0")
+                int.Parse(item.Element("MINQTY")?.Value ?? "0"),
+                haveQuantity
             );
 
             var key = piece.GetKey();

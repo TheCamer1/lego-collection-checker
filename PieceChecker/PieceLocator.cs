@@ -1,6 +1,7 @@
-﻿using System.Text;
+﻿using LegoCollectionChecker.Common;
+using System.Text;
 
-namespace LegoCollectionChecker;
+namespace LegoCollectionChecker.PieceChecker;
 
 internal static class PieceLocator
 {
@@ -15,7 +16,7 @@ internal static class PieceLocator
         var colorId = colourMap.GetIdByEnum(color)!.Value;
         var name = colourMap.GetNameByEnum(color);
 
-        bool isColorInvariant = ignoreColour || ColourInvariantDictionary.InvariantIds.Contains(itemId);
+        bool isColorInvariant = ignoreColour; // || ColourInvariantDictionary.InvariantIds.Contains(itemId);
         Console.WriteLine($"Piece {itemId} in {color}");
         Console.WriteLine();
         var completeAmounts = DisplayModelAmounts(itemId, colorId, isColorInvariant, true);
@@ -35,7 +36,11 @@ internal static class PieceLocator
         }
     }
 
-    private static void PrintMissing(int colorId, Dictionary<int, int> completeAmounts, Dictionary<int, int> incompleteAmounts, Dictionary<int, int> collectionAmounts)
+    private static void PrintMissing(
+        int colorId, 
+        Dictionary<int, int> completeAmounts, 
+        Dictionary<int, int> incompleteAmounts, 
+        Dictionary<int, int> collectionAmounts)
     {
         var excessAmount = collectionAmounts.Values.Sum() - incompleteAmounts.Values.Sum() - completeAmounts.Values.Sum();
         if (excessAmount > 0)
@@ -102,7 +107,7 @@ internal static class PieceLocator
     {
         var colourMap = new ColourMap();
         // Load the complete collection
-        var completeCollection = CollectionLoader.LoadCollection("../../../CompleteCollection.xml");
+        var completeCollection = CollectionLoader.LoadCollection("../../../../Common/CompleteCollection.xml");
         // Get the total quantity in the complete collection
         var totalQuantitiesInCollection = CalculateTotalQuantity(itemId, completeCollection, isColorInvariant, colorId);
         Console.WriteLine("Complete Collection:");
@@ -126,7 +131,7 @@ internal static class PieceLocator
     {
         var colourMap = new ColourMap();
         var alternativeIds = AlternativeDictionary.GetAlternativeItemIds(itemId);
-        var models = ListModelsContainingPiece(itemId, $"../../../{(isComplete ? "Completed" : "Incomplete")}Models");
+        var models = ListModelsContainingPiece(itemId, $"../../../../Common/{(isComplete ? "Completed" : "Incomplete")}Models");
         Console.WriteLine($"{(isComplete ? "Complete" : "Incomplete")}:");
         int totalInModels = 0;
         foreach (var model in models)
@@ -182,7 +187,11 @@ internal static class PieceLocator
         return totals;
     }
 
-    private static Dictionary<int, int> CalculateTotalQuantity(string itemId, Dictionary<string, LegoPiece> completeCollection, bool isColorInvariant, int colorId)
+    private static Dictionary<int, int> CalculateTotalQuantity(
+        string itemId, 
+        Dictionary<string, LegoPiece> completeCollection, 
+        bool isColorInvariant, 
+        int colorId)
     {
         var alternativeIds = AlternativeDictionary.GetAlternativeItemIds(itemId);
         var totalQuantities = new Dictionary<int, int>();

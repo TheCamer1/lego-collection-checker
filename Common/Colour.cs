@@ -1,4 +1,4 @@
-﻿namespace LegoCollectionChecker;
+﻿namespace LegoCollectionChecker.Common;
 
 public enum Colour : byte
 {

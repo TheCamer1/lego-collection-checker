@@ -1,7 +1,9 @@
-﻿namespace LegoCollectionChecker
+﻿namespace LegoCollectionChecker.MissingPiecesGenerator
 {
     public class ColourInvariantDictionary
     {
+        // This dictionary contains a list of pieces whose colour does
+        // not matter when determining if the piece is missing
         public static HashSet<string> InvariantIds = new()
         {
             "3737",

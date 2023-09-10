@@ -1,6 +1,6 @@
-﻿using System.Xml.Linq;
+﻿using LegoCollectionChecker.Common;
 
-namespace LegoCollectionChecker;
+namespace LegoCollectionChecker.MissingPiecesGenerator;
 
 public static class MissingPieceGenerator
 {
@@ -46,21 +46,11 @@ public static class MissingPieceGenerator
             }
         }
 
-        // Generate the missing pieces XML
-        var inventory = new XElement("INVENTORY",
+        var pieces = 
             from piece in missingPieces.Values
             where !ShouldExcludePiece(piece)
-            select new XElement("ITEM",
-                new XElement("ITEMTYPE", piece.ItemType),
-                new XElement("ITEMID", piece.ItemId),
-                new XElement("COLOR", piece.Color),
-                new XElement("MAXPRICE", "-1.0000"),
-                new XElement("MINQTY", piece.Quantity),
-                new XElement("CONDITION", "X"),
-                new XElement("NOTIFY", "N")));
-
-        var doc = new XDocument(inventory);
-        doc.Save("../../../MissingPieces.xml");
+            select piece;
+        FileGenerator.GenerateFile(pieces, "../../../MissingPieces.xml");
     }
 
     private static bool ShouldExcludePiece(LegoPiece piece)

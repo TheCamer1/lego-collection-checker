@@ -1,4 +1,4 @@
-﻿namespace LegoCollectionChecker
+﻿namespace LegoCollectionChecker.MissingPiecesGenerator
 {
     public static class ColourExclusionDictionary
     {

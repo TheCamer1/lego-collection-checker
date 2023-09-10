@@ -1,4 +1,6 @@
-﻿namespace LegoCollectionChecker
+﻿using LegoCollectionChecker.Common;
+
+namespace LegoCollectionChecker.MissingPiecesGenerator
 {
     public class PieceExclusionDictionary
     {

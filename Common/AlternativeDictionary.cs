@@ -1,6 +1,6 @@
-﻿namespace LegoCollectionChecker;
+﻿namespace LegoCollectionChecker.Common;
 
-internal static class AlternativeDictionary
+public static class AlternativeDictionary
 {
     public static List<HashSet<string>> AlternativeItemIds = new()
     {
