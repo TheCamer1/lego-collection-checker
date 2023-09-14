@@ -88,6 +88,15 @@ public class LegoPiece
         Quantity = 1;
     }
 
+    public LegoPiece(string itemId, int color)
+    {
+        var colourMap = new ColourMap();
+        ItemType = "P";
+        ItemId = itemId;
+        Color = color;
+        Quantity = 1;
+    }
+
     public string GetKey()
     {
         return $"{ItemType}:{ItemId}:{Color}";

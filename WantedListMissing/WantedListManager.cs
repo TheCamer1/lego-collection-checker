@@ -13,7 +13,7 @@ public static class WantedListManager
         var remainingWantedPieces = FilterRemainingWantedPieces(pieces.Values);
 
         // Generate a new XML file with the filtered list
-        FileGenerator.GenerateFile(remainingWantedPieces, $"{outputFileName}Missing");
+        FileGenerator.GenerateFile(remainingWantedPieces, $"../../../{outputFileName}Missing.xml");
     }
 
     private static IEnumerable<LegoPiece> FilterRemainingWantedPieces(IEnumerable<LegoPiece> pieces)

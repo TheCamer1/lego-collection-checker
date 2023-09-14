@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LegoCollectionChecker.Commo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LegoCollectionChecker.PieceChecker", "PieceChecker\LegoCollectionChecker.PieceChecker.csproj", "{67280FE1-7E9C-4DC2-8365-963B74CC6C6B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LegoCollectionChecker.WantedListMissing", "WantedListHaveOnly\LegoCollectionChecker.WantedListMissing.csproj", "{A472F9B0-9F02-4F42-B515-35E3FD535C4C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LegoCollectionChecker.WantedListMissing", "WantedListMissing\LegoCollectionChecker.WantedListMissing.csproj", "{A472F9B0-9F02-4F42-B515-35E3FD535C4C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

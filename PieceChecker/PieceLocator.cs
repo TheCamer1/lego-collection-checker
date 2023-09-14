@@ -1,4 +1,5 @@
 ﻿using LegoCollectionChecker.Common;
+using System.Drawing;
 using System.Text;
 
 namespace LegoCollectionChecker.PieceChecker;
@@ -15,6 +16,8 @@ internal static class PieceLocator
         }
         var colorId = colourMap.GetIdByEnum(color)!.Value;
         var name = colourMap.GetNameByEnum(color);
+        // Load the complete collection
+        var completeCollection = CollectionLoader.LoadCollection("../../../../Common/CompleteCollection.xml");
 
         bool isColorInvariant = ignoreColour; // || ColourInvariantDictionary.InvariantIds.Contains(itemId);
         Console.WriteLine($"Piece {itemId} in {color}");
@@ -23,7 +26,7 @@ internal static class PieceLocator
         Console.WriteLine();
         var incompleteAmounts = DisplayModelAmounts(itemId, colorId, isColorInvariant, false);
         Console.WriteLine();
-        var collectionAmounts = DisplayCompleteCollectionAmounts(itemId, name!, colorId, isColorInvariant);
+        var collectionAmounts = DisplayCompleteCollectionAmounts(itemId, name!, colorId, isColorInvariant, completeCollection);
 
         Console.WriteLine();
         if (isColorInvariant)
@@ -60,8 +63,13 @@ internal static class PieceLocator
         }
     }
 
-    private static void PrintMissingByColour(ColourMap colourMap, Dictionary<int, int> completeAmounts, Dictionary<int, int> incompleteAmounts, Dictionary<int, int> collectionAmounts)
+    private static void PrintMissingByColour(
+        ColourMap colourMap, 
+        Dictionary<int, int> completeAmounts, 
+        Dictionary<int, int> incompleteAmounts, 
+        Dictionary<int, int> collectionAmounts)
     {
+        var total = 0;
         // First, print missing pieces:
         foreach (var colour in collectionAmounts.Keys)
         {
@@ -73,6 +81,7 @@ internal static class PieceLocator
             if (excessAmount < 0)
             {
                 Console.WriteLine($"{colourNameForOutput} Missing: {-excessAmount}");
+                total += excessAmount;
             }
         }
 
@@ -87,27 +96,31 @@ internal static class PieceLocator
             if (excessAmount > 0)
             {
                 Console.WriteLine($"{colourNameForOutput} Excess: {excessAmount}");
+                total += excessAmount;
             }
-        }
-
-        // Finally, print "None Used":
-        foreach (var colour in collectionAmounts.Keys)
-        {
-            var colourNameForOutput = colourMap.GetNameById(colour) ?? "Unknown colour";
-
-            if (!incompleteAmounts.ContainsKey(colour))
+            if (excessAmount == 0)
             {
-                Console.WriteLine($"{colourNameForOutput}: None Used");
+                Console.WriteLine($"{colourNameForOutput} All Used: 0");
             }
         }
-
+        if (total < 0)
+        {
+            Console.WriteLine($"MISSING TOTAL: {-total}");
+        }
+        else
+        {
+            Console.WriteLine($"EXCESS TOTAL: {total}");
+        }
     }
 
-    private static Dictionary<int, int> DisplayCompleteCollectionAmounts(string itemId, string colorName, int colorId, bool isColorInvariant)
+    private static Dictionary<int, int> DisplayCompleteCollectionAmounts(
+        string itemId, 
+        string colorName, 
+        int colorId, 
+        bool isColorInvariant, 
+        Dictionary<string, LegoPiece> completeCollection)
     {
         var colourMap = new ColourMap();
-        // Load the complete collection
-        var completeCollection = CollectionLoader.LoadCollection("../../../../Common/CompleteCollection.xml");
         // Get the total quantity in the complete collection
         var totalQuantitiesInCollection = CalculateTotalQuantity(itemId, completeCollection, isColorInvariant, colorId);
         Console.WriteLine("Complete Collection:");
