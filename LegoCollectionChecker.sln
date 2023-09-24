@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LegoCollectionChecker.Piece
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LegoCollectionChecker.WantedListMissing", "WantedListMissing\LegoCollectionChecker.WantedListMissing.csproj", "{A472F9B0-9F02-4F42-B515-35E3FD535C4C}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LegoCollectionChecker.WantedListCombiner", "WantedListCombiner\LegoCollectionChecker.WantedListCombiner.csproj", "{48AB3EB8-37BC-4D70-8A86-169B3AA3EA89}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{A472F9B0-9F02-4F42-B515-35E3FD535C4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A472F9B0-9F02-4F42-B515-35E3FD535C4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A472F9B0-9F02-4F42-B515-35E3FD535C4C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48AB3EB8-37BC-4D70-8A86-169B3AA3EA89}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48AB3EB8-37BC-4D70-8A86-169B3AA3EA89}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48AB3EB8-37BC-4D70-8A86-169B3AA3EA89}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48AB3EB8-37BC-4D70-8A86-169B3AA3EA89}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
