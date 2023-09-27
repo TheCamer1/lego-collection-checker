@@ -64,12 +64,15 @@ internal static class PieceLocator
     }
 
     private static void PrintMissingByColour(
-        ColourMap colourMap,
-        Dictionary<int, int> completeAmounts,
-        Dictionary<int, int> incompleteAmounts,
-        Dictionary<int, int> collectionAmounts)
+    ColourMap colourMap,
+    Dictionary<int, int> completeAmounts,
+    Dictionary<int, int> incompleteAmounts,
+    Dictionary<int, int> collectionAmounts)
     {
         var total = 0;
+        var allUsedList = new List<string>();
+        var excessList = new List<string>();
+        var missingList = new List<string>();
 
         // Combine all the colour keys from the three dictionaries into one HashSet
         var allColours = new HashSet<int>(completeAmounts.Keys);
@@ -85,26 +88,39 @@ internal static class PieceLocator
         // Iterate over sorted colours to identify missing and excess pieces
         foreach (var (colourName, colourId) in sortedColours)
         {
-            var completeAmount = completeAmounts.ContainsKey(colourId) ? completeAmounts[colourId] : 0;
-            var incompleteAmount = incompleteAmounts.ContainsKey(colourId) ? incompleteAmounts[colourId] : 0;
-            var collectionAmount = collectionAmounts.ContainsKey(colourId) ? collectionAmounts[colourId] : 0;
+            var completeAmount = completeAmounts.GetValueOrDefault(colourId, 0);
+            var incompleteAmount = incompleteAmounts.GetValueOrDefault(colourId, 0);
+            var collectionAmount = collectionAmounts.GetValueOrDefault(colourId, 0);
 
             var excessAmount = collectionAmount - incompleteAmount - completeAmount;
 
             if (excessAmount < 0)
             {
-                Console.WriteLine($"{colourName} Missing: {-excessAmount}");
+                missingList.Add($"{colourName} Missing: {-excessAmount}");
                 total += excessAmount;
             }
             else if (excessAmount > 0)
             {
-                Console.WriteLine($"{colourName} Excess: {excessAmount}");
+                excessList.Add($"{colourName} Excess: {excessAmount}");
                 total += excessAmount;
             }
             else
             {
-                Console.WriteLine($"{colourName} All Used: 0");
+                allUsedList.Add($"{colourName} All Used: 0");
             }
+        }
+
+        foreach (var entry in allUsedList.OrderBy(s => s))
+        {
+            Console.WriteLine(entry);
+        }
+        foreach (var entry in excessList.OrderBy(s => s))
+        {
+            Console.WriteLine(entry);
+        }
+        foreach (var entry in missingList.OrderBy(s => s))
+        {
+            Console.WriteLine(entry);
         }
 
         if (total < 0)
@@ -214,13 +230,13 @@ internal static class PieceLocator
 
             foreach (var (colourName, colourId) in sortedColours)
             {
-                Console.WriteLine($"{colourName} Total: {colourTotals[colourId]}");
+                Console.WriteLine($"{colourName}: {colourTotals[colourId]}");
             }
         }
 
         Console.WriteLine($"{(isComplete ? "Complete" : "Incomplete")} Total: {totalInModels}");
 
-        return colourTotals; // Now contains the summed-up quantities per colour
+        return colourTotals;
     }
 
 
