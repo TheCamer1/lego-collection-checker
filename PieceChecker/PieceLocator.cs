@@ -45,7 +45,9 @@ internal static class PieceLocator
         Dictionary<int, int> incompleteAmounts,
         Dictionary<int, int> collectionAmounts)
     {
-        var excessAmount = collectionAmounts.Values.Sum() - incompleteAmounts.Values.Sum() - completeAmounts.Values.Sum();
+        int incomplete = incompleteAmounts.Values.Sum();
+        int complete = completeAmounts.Values.Sum();
+        var excessAmount = collectionAmounts.Values.Sum() - incomplete - complete;
         if (excessAmount > 0)
         {
             Console.WriteLine($"Excess: {excessAmount}");
@@ -58,7 +60,7 @@ internal static class PieceLocator
             }
             else
             {
-                Console.WriteLine($"Missing: {-excessAmount}");
+                Console.WriteLine($"Missing: {Math.Min(-excessAmount, incomplete)}");
             }
         }
     }
@@ -96,8 +98,9 @@ internal static class PieceLocator
 
             if (excessAmount < 0)
             {
-                missingList.Add($"{colourName} Missing: {-excessAmount}");
-                total += excessAmount;
+                var requiredAmount = Math.Min(-excessAmount, incompleteAmount);
+                missingList.Add($"{colourName} Missing: {requiredAmount}");
+                total -= requiredAmount;
             }
             else if (excessAmount > 0)
             {
@@ -234,7 +237,7 @@ internal static class PieceLocator
             }
         }
 
-        Console.WriteLine($"{(isComplete ? "Complete" : "Incomplete")} Total: {totalInModels}");
+        Console.WriteLine($"{(isComplete ? "Completed" : "Incomplete")} Total: {totalInModels}");
 
         return colourTotals;
     }
