@@ -64,18 +64,27 @@ internal static class PieceLocator
     }
 
     private static void PrintMissingByColour(
-        ColourMap colourMap, 
-        Dictionary<int, int> completeAmounts, 
-        Dictionary<int, int> incompleteAmounts, 
+        ColourMap colourMap,
+        Dictionary<int, int> completeAmounts,
+        Dictionary<int, int> incompleteAmounts,
         Dictionary<int, int> collectionAmounts)
     {
         var total = 0;
-        // First, print missing pieces:
-        foreach (var colour in collectionAmounts.Keys)
+
+        // Combine all the colour keys from the three dictionaries into one HashSet
+        var allColours = new HashSet<int>(completeAmounts.Keys);
+        allColours.UnionWith(incompleteAmounts.Keys);
+        allColours.UnionWith(collectionAmounts.Keys);
+
+        // Iterate over all colours to identify missing and excess pieces
+        foreach (var colour in allColours)
         {
-            var excessAmount = collectionAmounts[colour]
-                             - (incompleteAmounts.ContainsKey(colour) ? incompleteAmounts[colour] : 0)
-                             - (completeAmounts.ContainsKey(colour) ? completeAmounts[colour] : 0);
+            var completeAmount = completeAmounts.ContainsKey(colour) ? completeAmounts[colour] : 0;
+            var incompleteAmount = incompleteAmounts.ContainsKey(colour) ? incompleteAmounts[colour] : 0;
+            var collectionAmount = collectionAmounts.ContainsKey(colour) ? collectionAmounts[colour] : 0;
+
+            var excessAmount = collectionAmount - incompleteAmount - completeAmount;
+
             var colourNameForOutput = colourMap.GetNameById(colour) ?? "Unknown colour";
 
             if (excessAmount < 0)
@@ -83,26 +92,17 @@ internal static class PieceLocator
                 Console.WriteLine($"{colourNameForOutput} Missing: {-excessAmount}");
                 total += excessAmount;
             }
-        }
-
-        // Then, print excess pieces:
-        foreach (var colour in collectionAmounts.Keys)
-        {
-            var excessAmount = collectionAmounts[colour]
-                             - (incompleteAmounts.ContainsKey(colour) ? incompleteAmounts[colour] : 0)
-                             - (completeAmounts.ContainsKey(colour) ? completeAmounts[colour] : 0);
-            var colourNameForOutput = colourMap.GetNameById(colour) ?? "Unknown colour";
-
-            if (excessAmount > 0)
+            else if (excessAmount > 0)
             {
                 Console.WriteLine($"{colourNameForOutput} Excess: {excessAmount}");
                 total += excessAmount;
             }
-            if (excessAmount == 0)
+            else
             {
                 Console.WriteLine($"{colourNameForOutput} All Used: 0");
             }
         }
+
         if (total < 0)
         {
             Console.WriteLine($"MISSING TOTAL: {-total}");
