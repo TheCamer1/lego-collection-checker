@@ -159,22 +159,37 @@ internal static class PieceLocator
         var alternativeIds = AlternativeDictionary.GetAlternativeItemIds(itemId);
         var models = ListModelsContainingPiece(itemId, $"../../../../Common/{(isComplete ? "Completed" : "Incomplete")}Models");
         Console.WriteLine($"{(isComplete ? "Complete" : "Incomplete")}:");
+
         int totalInModels = 0;
+        Dictionary<int, int> colourTotals = new(); // To keep track of individual colour totals
+
         foreach (var model in models)
         {
             int modelQuantity = 0;
-            StringBuilder colorQuantities = new();
+            StringBuilder colorQuantities = new StringBuilder();
+
             foreach (var piece in model.Value)
             {
-                // Check whether the ItemId of the current piece matches the original ItemId or any of its alternative Ids
                 if (alternativeIds.Contains(piece.ItemId) && (piece.Color == colorId || isColorInvariant))
                 {
                     var pieceColorName = colourMap.GetNameById(piece.Color) ?? "Unknown color";
                     colorQuantities.Append($"{pieceColorName}: {piece.Quantity}, ");
+
                     totalInModels += piece.Quantity;
                     modelQuantity += piece.Quantity;
+
+                    // Sum up the amounts per colour
+                    if (colourTotals.ContainsKey(piece.Color))
+                    {
+                        colourTotals[piece.Color] += piece.Quantity;
+                    }
+                    else
+                    {
+                        colourTotals[piece.Color] = piece.Quantity;
+                    }
                 }
             }
+
             if (modelQuantity > 0)
             {
                 if (isColorInvariant)
@@ -187,31 +202,27 @@ internal static class PieceLocator
                 }
             }
         }
-        Console.WriteLine($"{(isComplete ? "Complete" : "Incomplete")} Total: {totalInModels}");
-        var totals = new Dictionary<int, int>();
+
+        Console.WriteLine();
+        // Print individual colour totals in alphabetical order
         if (isColorInvariant)
         {
-            foreach (var model in models)
+            var sortedColours = colourTotals.Keys
+                .Select(id => (Name: colourMap.GetNameById(id) ?? "Unknown color", Id: id))
+                .OrderBy(tuple => tuple.Name)
+                .ToList();
+
+            foreach (var (colourName, colourId) in sortedColours)
             {
-                foreach (var piece in model.Value)
-                {
-                    if (totals.ContainsKey(piece.Color))
-                    {
-                        totals[piece.Color] += piece.Quantity;
-                    }
-                    else
-                    {
-                        totals[piece.Color] = piece.Quantity;
-                    }
-                }
+                Console.WriteLine($"{colourName} Total: {colourTotals[colourId]}");
             }
         }
-        else
-        {
-            totals[colorId] = totalInModels;
-        }
-        return totals;
+
+        Console.WriteLine($"{(isComplete ? "Complete" : "Incomplete")} Total: {totalInModels}");
+
+        return colourTotals; // Now contains the summed-up quantities per colour
     }
+
 
     private static Dictionary<int, int> CalculateTotalQuantity(
         string itemId,
