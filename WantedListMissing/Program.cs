@@ -4,6 +4,6 @@ class Program
 {
     static void Main()
     {
-        WantedListManager.ProcessWantedList("Hogwarts");
+        WantedListManager.ProcessWantedList("MTT");
     }
 }
