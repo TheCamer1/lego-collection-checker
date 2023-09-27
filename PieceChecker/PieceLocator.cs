@@ -40,9 +40,9 @@ internal static class PieceLocator
     }
 
     private static void PrintMissing(
-        int colorId, 
-        Dictionary<int, int> completeAmounts, 
-        Dictionary<int, int> incompleteAmounts, 
+        int colorId,
+        Dictionary<int, int> completeAmounts,
+        Dictionary<int, int> incompleteAmounts,
         Dictionary<int, int> collectionAmounts)
     {
         var excessAmount = collectionAmounts.Values.Sum() - incompleteAmounts.Values.Sum() - completeAmounts.Values.Sum();
@@ -76,30 +76,34 @@ internal static class PieceLocator
         allColours.UnionWith(incompleteAmounts.Keys);
         allColours.UnionWith(collectionAmounts.Keys);
 
-        // Iterate over all colours to identify missing and excess pieces
-        foreach (var colour in allColours)
+        // Create a list of tuples containing the colour name and ID, and sort it
+        var sortedColours = allColours
+            .Select(id => (Name: colourMap.GetNameById(id) ?? "Unknown colour", Id: id))
+            .OrderBy(tuple => tuple.Name)
+            .ToList();
+
+        // Iterate over sorted colours to identify missing and excess pieces
+        foreach (var (colourName, colourId) in sortedColours)
         {
-            var completeAmount = completeAmounts.ContainsKey(colour) ? completeAmounts[colour] : 0;
-            var incompleteAmount = incompleteAmounts.ContainsKey(colour) ? incompleteAmounts[colour] : 0;
-            var collectionAmount = collectionAmounts.ContainsKey(colour) ? collectionAmounts[colour] : 0;
+            var completeAmount = completeAmounts.ContainsKey(colourId) ? completeAmounts[colourId] : 0;
+            var incompleteAmount = incompleteAmounts.ContainsKey(colourId) ? incompleteAmounts[colourId] : 0;
+            var collectionAmount = collectionAmounts.ContainsKey(colourId) ? collectionAmounts[colourId] : 0;
 
             var excessAmount = collectionAmount - incompleteAmount - completeAmount;
 
-            var colourNameForOutput = colourMap.GetNameById(colour) ?? "Unknown colour";
-
             if (excessAmount < 0)
             {
-                Console.WriteLine($"{colourNameForOutput} Missing: {-excessAmount}");
+                Console.WriteLine($"{colourName} Missing: {-excessAmount}");
                 total += excessAmount;
             }
             else if (excessAmount > 0)
             {
-                Console.WriteLine($"{colourNameForOutput} Excess: {excessAmount}");
+                Console.WriteLine($"{colourName} Excess: {excessAmount}");
                 total += excessAmount;
             }
             else
             {
-                Console.WriteLine($"{colourNameForOutput} All Used: 0");
+                Console.WriteLine($"{colourName} All Used: 0");
             }
         }
 
@@ -114,29 +118,38 @@ internal static class PieceLocator
     }
 
     private static Dictionary<int, int> DisplayCompleteCollectionAmounts(
-        string itemId, 
-        string colorName, 
-        int colorId, 
-        bool isColorInvariant, 
+        string itemId,
+        string colorName,
+        int colorId,
+        bool isColorInvariant,
         Dictionary<string, LegoPiece> completeCollection)
     {
         var colourMap = new ColourMap();
         // Get the total quantity in the complete collection
         var totalQuantitiesInCollection = CalculateTotalQuantity(itemId, completeCollection, isColorInvariant, colorId);
         Console.WriteLine("Complete Collection:");
+
         if (isColorInvariant)
         {
-            foreach (var entry in totalQuantitiesInCollection)
+            // Create a list of tuples containing the colour name and ID, and sort it
+            var sortedColours = totalQuantitiesInCollection.Keys
+                .Select(id => (Name: colourMap.GetNameById(id) ?? "Unknown color", Id: id))
+                .OrderBy(tuple => tuple.Name)
+                .ToList();
+
+            // Iterate over sorted colours to display their quantities
+            foreach (var (colourName, colourId) in sortedColours)
             {
-                var colorNameFromId = colourMap.GetNameById(entry.Key) ?? "Unknown color";
-                Console.WriteLine($"{colorNameFromId}: {entry.Value}");
+                Console.WriteLine($"{colourName}: {totalQuantitiesInCollection[colourId]}");
             }
+
             Console.WriteLine($"Collection Total: {totalQuantitiesInCollection.Values.Sum()}");
         }
         else
         {
             Console.WriteLine($"{colorName}: {(totalQuantitiesInCollection.ContainsKey(colorId) ? totalQuantitiesInCollection[colorId] : 0)}");
         }
+
         return totalQuantitiesInCollection;
     }
 
@@ -201,9 +214,9 @@ internal static class PieceLocator
     }
 
     private static Dictionary<int, int> CalculateTotalQuantity(
-        string itemId, 
-        Dictionary<string, LegoPiece> completeCollection, 
-        bool isColorInvariant, 
+        string itemId,
+        Dictionary<string, LegoPiece> completeCollection,
+        bool isColorInvariant,
         int colorId)
     {
         var alternativeIds = AlternativeDictionary.GetAlternativeItemIds(itemId);
