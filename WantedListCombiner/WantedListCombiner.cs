@@ -9,7 +9,7 @@ public static class WantedListCombiner
         Dictionary<string, LegoPiece> masterList = new Dictionary<string, LegoPiece>();
 
         // Get all XML files in the folder
-        var files = Directory.GetFiles("../../../MissingModels", "*.xml");
+        var files = Directory.GetFiles("../../../../Common/MissingModels", "*.xml");
 
         foreach (var file in files)
         {
@@ -34,6 +34,6 @@ public static class WantedListCombiner
         }
 
         // Generate the combined XML file
-        FileGenerator.GenerateFile(masterList.Values, "AllMissing");
+        FileGenerator.GenerateFile(masterList.Values, "../../../AllMissing.xml");
     }
 }
