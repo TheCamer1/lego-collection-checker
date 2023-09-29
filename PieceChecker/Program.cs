@@ -6,6 +6,6 @@ class Program
 {
     static void Main()
     {
-        PieceLocator.CheckPiece("13547", Colour.White, true);
+        PieceLocator.CheckPiece("24299", Colour.DarkBluishGray);
     }
 }
