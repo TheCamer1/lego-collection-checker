@@ -1,45 +1,48 @@
 ﻿using LegoCollectionChecker.Common;
-using System.Drawing;
 using System.Text;
 
 namespace LegoCollectionChecker.PieceChecker;
 
-internal static class PieceLocator
+public static class PieceLocator
 {
     public static void CheckPiece(string itemId, Colour color, bool ignoreColour = false)
     {
+        var completeCollection = CollectionLoader.LoadCollection("../../../../Common/CompleteCollection.xml");
         var colourMap = new ColourMap();
         if (!colourMap.ContainsColour(color))
         {
-            Console.WriteLine($"Unknown colour name: {color}");
-            return;
+            throw new InvalidOperationException($"Unknown colour name: {color}");
         }
         var colorId = colourMap.GetIdByEnum(color)!.Value;
-        var name = colourMap.GetNameByEnum(color);
-        // Load the complete collection
-        var completeCollection = CollectionLoader.LoadCollection("../../../../Common/CompleteCollection.xml");
+        GetExcess(completeCollection, itemId, colorId, ignoreColour);
+    }
 
-        bool isColorInvariant = ignoreColour; // || ColourInvariantDictionary.InvariantIds.Contains(itemId);
+    public static int GetExcess(Dictionary<string, LegoPiece> completeCollection, string itemId, int colorId, bool ignoreColour = false)
+    {
+        var colourMap = new ColourMap();
+        var name = colourMap.GetNameById(colorId);
+        var color = colourMap.GetEnumById(colorId);
+
         Console.WriteLine($"Piece {itemId} in {color}");
         Console.WriteLine();
-        var completeAmounts = DisplayModelAmounts(itemId, colorId, isColorInvariant, true);
+        var completeAmounts = DisplayModelAmounts(itemId, colorId, ignoreColour, true);
         Console.WriteLine();
-        var incompleteAmounts = DisplayModelAmounts(itemId, colorId, isColorInvariant, false);
+        var incompleteAmounts = DisplayModelAmounts(itemId, colorId, ignoreColour, false);
         Console.WriteLine();
-        var collectionAmounts = DisplayCompleteCollectionAmounts(itemId, name!, colorId, isColorInvariant, completeCollection);
+        var collectionAmounts = DisplayCompleteCollectionAmounts(itemId, name!, colorId, ignoreColour, completeCollection);
 
         Console.WriteLine();
-        if (isColorInvariant)
+        if (ignoreColour)
         {
-            PrintMissingByColour(colourMap, completeAmounts, incompleteAmounts, collectionAmounts);
+            return PrintMissingByColour(colourMap, completeAmounts, incompleteAmounts, collectionAmounts);
         }
         else
         {
-            PrintMissing(colorId, completeAmounts, incompleteAmounts, collectionAmounts);
+            return PrintMissing(colorId, completeAmounts, incompleteAmounts, collectionAmounts);
         }
     }
 
-    private static void PrintMissing(
+    private static int PrintMissing(
         int colorId,
         Dictionary<int, int> completeAmounts,
         Dictionary<int, int> incompleteAmounts,
@@ -63,13 +66,14 @@ internal static class PieceLocator
                 Console.WriteLine($"Missing: {Math.Min(-excessAmount, incomplete)}");
             }
         }
+        return excessAmount;
     }
 
-    private static void PrintMissingByColour(
-    ColourMap colourMap,
-    Dictionary<int, int> completeAmounts,
-    Dictionary<int, int> incompleteAmounts,
-    Dictionary<int, int> collectionAmounts)
+    private static int PrintMissingByColour(
+        ColourMap colourMap,
+        Dictionary<int, int> completeAmounts,
+        Dictionary<int, int> incompleteAmounts,
+        Dictionary<int, int> collectionAmounts)
     {
         var total = 0;
         var allUsedList = new List<string>();
@@ -134,6 +138,7 @@ internal static class PieceLocator
         {
             Console.WriteLine($"EXCESS TOTAL: {total}");
         }
+        return total;
     }
 
     private static Dictionary<int, int> DisplayCompleteCollectionAmounts(

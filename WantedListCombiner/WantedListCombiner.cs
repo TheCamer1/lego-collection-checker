@@ -6,7 +6,7 @@ public static class WantedListCombiner
 {
     public static void GenerateCombinedList()
     {
-        Dictionary<string, LegoPiece> masterList = new Dictionary<string, LegoPiece>();
+        Dictionary<string, LegoPiece> masterList = new();
 
         // Get all XML files in the folder
         var files = Directory.GetFiles("../../../../Common/MissingModels", "*.xml");
