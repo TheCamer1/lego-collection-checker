@@ -16,10 +16,10 @@ public static class MissingPieceGenerator
 
     public static void GenerateMissingPieces()
     {
-        var completeCollection = CollectionLoader.LoadCollection("../../../CompleteCollection.xml");
+        var completeCollection = CollectionLoader.LoadCollection("../../../../Common/CompleteCollection.xml");
 
         // process completed models
-        foreach (var file in Directory.GetFiles("../../../CompletedModels", "*.xml"))
+        foreach (var file in Directory.GetFiles("../../../../Common/CompletedModels", "*.xml"))
         {
             var modelPieces = CollectionLoader.LoadCollection(file);
             foreach (var piece in modelPieces.Values)
@@ -30,7 +30,7 @@ public static class MissingPieceGenerator
 
         // Process incomplete models and find missing pieces
         var missingPieces = new Dictionary<string, LegoPiece>();
-        foreach (var file in Directory.GetFiles("../../../IncompleteModels", "*.xml"))
+        foreach (var file in Directory.GetFiles("../../../../Common/IncompleteModels", "*.xml"))
         {
             var modelPieces = CollectionLoader.LoadCollection(file);
             foreach (var piece in modelPieces.Values)

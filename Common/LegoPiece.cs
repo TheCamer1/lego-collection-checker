@@ -2,7 +2,7 @@
 
 public class LegoPiece
 {
-    public string ItemType { get; set; }
+    public string ItemType { get; set; } = "P";
     public string ItemId { get; set; }
     public int Color { get; set; }
     public int Quantity { get; set; }
@@ -90,7 +90,6 @@ public class LegoPiece
 
     public LegoPiece(string itemId, int color)
     {
-        var colourMap = new ColourMap();
         ItemType = "P";
         ItemId = itemId;
         Color = color;
