@@ -7,10 +7,17 @@ namespace LegoCollectionChecker.PieceChecker.Controllers;
 [Route("[controller]")]
 public class PieceCheckerController : ControllerBase
 {
+    private readonly PieceLocator pieceLocator;
+
+    public PieceCheckerController()
+    {
+        pieceLocator = new PieceLocator();
+    }
+
     [HttpGet("checkpiece")]
     public IActionResult CheckPiece(string id, Colour colour, bool ignoreColour)
     {
-        var result = PieceLocator.CheckPiece(id, colour, ignoreColour);
+        var result = pieceLocator.CheckPiece(id, colour, ignoreColour);
         return Ok(result);
     }
 

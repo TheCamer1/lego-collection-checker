@@ -26,9 +26,9 @@ function selectColour(div, colour) {
 
 async function checkPiece() {
     const pieceId = document.getElementById('pieceId').value;
-    const ignoreColour = false; // Adjust as needed or add UI element to change this
-
+    const ignoreColour = document.getElementById('ignoreColour').checked;
+    document.getElementById('result').innerText = ""
     const response = await fetch(`/PieceChecker/checkpiece?id=${pieceId}&colour=${selectedColour}&ignoreColour=${ignoreColour}`);
     const result = await response.text();
-    document.getElementById('result').innerText = 'Result: ' + result;
+    document.getElementById('result').innerText = result;
 }

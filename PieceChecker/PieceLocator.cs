@@ -3,11 +3,21 @@ using System.Text;
 
 namespace LegoCollectionChecker.PieceChecker;
 
-public static class PieceLocator
+public class PieceLocator
 {
-    public static string CheckPiece(string itemId, Colour color, bool ignoreColour = false)
+    private readonly Dictionary<string, LegoPiece> completeCollection;
+    private readonly string[] completeFiles;
+    private readonly string[] incompleteFiles;
+
+    public PieceLocator()
     {
-        var completeCollection = CollectionLoader.LoadCollection("../Common/CompleteCollection.xml");
+        completeCollection = CollectionLoader.LoadCollection("../Common/CompleteCollection.xml");
+        completeFiles = Directory.GetFiles($"../Common/CompletedModels", "*.xml");
+        incompleteFiles = Directory.GetFiles($"../Common/IncompleteModels", "*.xml");
+    }
+
+    public string CheckPiece(string itemId, Colour color, bool ignoreColour = false)
+    {
         var colourMap = new ColourMap();
         if (!colourMap.ContainsColour(color))
         {
@@ -17,20 +27,19 @@ public static class PieceLocator
         return GetExcess(completeCollection, itemId, colorId, ignoreColour);
     }
 
-    public static string GetExcess(Dictionary<string, LegoPiece> completeCollection, string itemId, int colorId, bool ignoreColour = false)
+    public string GetExcess(Dictionary<string, LegoPiece> completeCollection, string itemId, int colorId, bool ignoreColour = false)
     {
         var colourMap = new ColourMap();
         var name = colourMap.GetNameById(colorId);
         var color = colourMap.GetEnumById(colorId);
 
         var sb = new StringBuilder();
-        sb.AppendLine($"Piece {itemId} in {color}");
         sb.AppendLine();
-        var completeAmounts = DisplayModelAmounts(itemId, colorId, ignoreColour, true, sb);
+        var collectionAmounts = DisplayCompleteCollectionAmounts(itemId, name!, colorId, ignoreColour, completeCollection, sb);
         sb.AppendLine();
         var incompleteAmounts = DisplayModelAmounts(itemId, colorId, ignoreColour, false, sb);
         sb.AppendLine();
-        var collectionAmounts = DisplayCompleteCollectionAmounts(itemId, name!, colorId, ignoreColour, completeCollection, sb);
+        var completeAmounts = DisplayModelAmounts(itemId, colorId, ignoreColour, true, sb);
 
         sb.AppendLine();
         if (ignoreColour)
@@ -41,11 +50,12 @@ public static class PieceLocator
         {
             PrintMissing(colorId, completeAmounts, incompleteAmounts, collectionAmounts, sb);
         }
+        sb.Insert(0, $"Piece {itemId} in {color}\r\n\r\n");
 
         return sb.ToString();
     }
 
-    private static void PrintMissing(
+    private void PrintMissing(
         int colorId,
         Dictionary<int, int> completeAmounts,
         Dictionary<int, int> incompleteAmounts,
@@ -57,22 +67,22 @@ public static class PieceLocator
         var excessAmount = collectionAmounts.Values.Sum() - incomplete - complete;
         if (excessAmount > 0)
         {
-            sb.AppendLine($"Excess: {excessAmount}");
+            sb.Insert(0, $"Excess: {excessAmount}\r\n");
         }
         else
         {
             if (!incompleteAmounts.ContainsKey(colorId) || incompleteAmounts[colorId] == 0)
             {
-                sb.AppendLine($"None left, but no incomplete models require them ({-excessAmount} is the result)");
+                sb.Insert(0, $"None left, but no incomplete models require them ({-excessAmount} is the result)\r\n");
             }
             else
             {
-                sb.AppendLine($"Missing: {Math.Min(-excessAmount, incomplete)}");
+                sb.Insert(0, $"Missing: {Math.Min(-excessAmount, incomplete)}\r\n");
             }
         }
     }
 
-    private static void PrintMissingByColour(
+    private void PrintMissingByColour(
         ColourMap colourMap,
         Dictionary<int, int> completeAmounts,
         Dictionary<int, int> incompleteAmounts,
@@ -121,30 +131,30 @@ public static class PieceLocator
             }
         }
 
-        foreach (var entry in allUsedList.OrderBy(s => s))
+        foreach (var entry in missingList.OrderBy(s => s))
         {
-            sb.AppendLine(entry);
+            sb.Insert(0, entry + "\r\n");
         }
         foreach (var entry in excessList.OrderBy(s => s))
         {
-            sb.AppendLine(entry);
+            sb.Insert(0, entry + "\r\n");
         }
-        foreach (var entry in missingList.OrderBy(s => s))
+        foreach (var entry in allUsedList.OrderBy(s => s))
         {
-            sb.AppendLine(entry);
+            sb.Insert(0, entry + "\r\n");
         }
 
         if (total < 0)
         {
-            sb.AppendLine($"MISSING TOTAL: {-total}");
+            sb.Insert(0, $"MISSING TOTAL: {-total}\r\n");
         }
         else
         {
-            sb.AppendLine($"EXCESS TOTAL: {total}");
+            sb.Insert(0, $"EXCESS TOTAL: {total}\r\n");
         }
     }
 
-    private static Dictionary<int, int> DisplayCompleteCollectionAmounts(
+    private Dictionary<int, int> DisplayCompleteCollectionAmounts(
         string itemId,
         string colorName,
         int colorId,
@@ -181,11 +191,11 @@ public static class PieceLocator
         return totalQuantitiesInCollection;
     }
 
-    private static Dictionary<int, int> DisplayModelAmounts(string itemId, int colorId, bool isColorInvariant, bool isComplete, StringBuilder sb)
+    private Dictionary<int, int> DisplayModelAmounts(string itemId, int colorId, bool isColorInvariant, bool isComplete, StringBuilder sb)
     {
         var colourMap = new ColourMap();
         var alternativeIds = AlternativeDictionary.GetAlternativeItemIds(itemId);
-        var models = ListModelsContainingPiece(itemId, $"../Common/{(isComplete ? "Completed" : "Incomplete")}Models");
+        var models = ListModelsContainingPiece(itemId, isComplete);
         sb.AppendLine($"{(isComplete ? "Complete" : "Incomplete")}:");
 
         int totalInModels = 0;
@@ -251,7 +261,7 @@ public static class PieceLocator
         return colourTotals;
     }
 
-    private static Dictionary<int, int> CalculateTotalQuantity(
+    private Dictionary<int, int> CalculateTotalQuantity(
         string itemId,
         Dictionary<string, LegoPiece> completeCollection,
         bool isColorInvariant,
@@ -287,12 +297,14 @@ public static class PieceLocator
         return totalQuantities;
     }
 
-    public static Dictionary<string, List<LegoPiece>> ListModelsContainingPiece(string itemId, string location)
+    public Dictionary<string, List<LegoPiece>> ListModelsContainingPiece(string itemId, bool isComplete)
     {
         var modelsContainingPiece = new Dictionary<string, List<LegoPiece>>();
         var alternativeIds = AlternativeDictionary.GetAlternativeItemIds(itemId);
 
-        foreach (var file in Directory.GetFiles(location, "*.xml"))
+        var files = isComplete ? completeFiles : incompleteFiles;
+
+        foreach (var file in files)
         {
             var modelPieces = CollectionLoader.LoadCollection(file);
             foreach (var altId in alternativeIds)

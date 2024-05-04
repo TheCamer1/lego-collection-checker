@@ -16,6 +16,7 @@
             line-height: 50px;
             text-align: center;
             vertical-align: middle;
+            cursor: pointer;
         }
 
         .selected {
@@ -27,6 +28,7 @@
     <h1>Lego Piece Checker</h1>
     <div id="colourContainer"></div>
     <input type="text" id="pieceId" placeholder="Enter Piece ID">
+    <label><input type="checkbox" id="ignoreColour"> Ignore Colour</label>
     <button onclick="checkPiece()">Go</button>
     <div id="result"></div>
 
