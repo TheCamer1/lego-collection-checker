@@ -2,84 +2,254 @@
 
 public class ColourMap
 {
-    private readonly List<ColourInfo> colourInfos;
+    public readonly List<ColourInfo> ColourInfos;
+    private static readonly Dictionary<Colour, string> RgbValues = new()
+    {
+        [Colour.White] = "FFFFFF",
+        [Colour.VeryLightGray] = "E6E3DA",
+        [Colour.VeryLightBluishGray] = "E6E3E0",
+        [Colour.LightBluishGray] = "A0A5A9",
+        [Colour.LightGray] = "9BA19D",
+        [Colour.DarkGray] = "6D6E5C",
+        [Colour.DarkBluishGray] = "6C6E68",
+        [Colour.Black] = "05131D",
+        [Colour.DarkRed] = "720E0F",
+        [Colour.Red] = "C91A09",
+        [Colour.Coral] = "FF698F",
+        [Colour.DarkSalmon] = "F2705E",
+        [Colour.Salmon] = "F2705E",
+        [Colour.LightSalmon] = "FEBABD",
+        [Colour.SandRed] = "D67572",
+        [Colour.DarkBrown] = "352100",
+        [Colour.Brown] = "583927",
+        [Colour.LightBrown] = "7C503A",
+        [Colour.MediumBrown] = "755945",
+        [Colour.ReddishBrown] = "582A12",
+        [Colour.FabulandBrown] = "B67B50",
+        [Colour.DarkTan] = "958A73",
+        [Colour.Tan] = "E4CD9E",
+        [Colour.LightNougat] = "F6D7B3",
+        [Colour.Nougat] = "D09168",
+        [Colour.MediumNougat] = "AA7D55",
+        [Colour.DarkNougat] = "AD6140",
+        [Colour.FabulandOrange] = "EF9121",
+        [Colour.EarthOrange] = "FA9C1C",
+        [Colour.DarkOrange] = "A95500",
+        [Colour.Rust] = "B31004",
+        [Colour.Orange] = "FE8A18",
+        [Colour.MediumOrange] = "FFA70B",
+        [Colour.BrightLightOrange] = "F8BB3D",
+        [Colour.LightOrange] = "F9BA61",
+        [Colour.VeryLightOrange] = "F3CF9B",
+        [Colour.Yellow] = "F2CD37",
+        [Colour.LightYellow] = "FBE696",
+        [Colour.BrightLightYellow] = "FFF03A",
+        [Colour.LightLime] = "D9E4A7",
+        [Colour.YellowishGreen] = "DFEEA5",
+        [Colour.MediumLime] = "C7D23C",
+        [Colour.FabulandLime] = "78FC78",
+        [Colour.Lime] = "BBE90B",
+        [Colour.OliveGreen] = "9B9A5A",
+        [Colour.DarkGreen] = "184632",
+        [Colour.Green] = "237841",
+        [Colour.BrightGreen] = "4B9F4A",
+        [Colour.MediumGreen] = "73DCA1",
+        [Colour.LightGreen] = "C2DAB8",
+        [Colour.SandGreen] = "A0BCAC",
+        [Colour.DarkTurquoise] = "008F9B",
+        [Colour.LightTurquoise] = "55A5AF",
+        [Colour.Aqua] = "B3D7D1",
+        [Colour.LightAqua] = "ADC3C0",
+        [Colour.DarkBlue] = "0A3463",
+        [Colour.Blue] = "0055BF",
+        [Colour.DarkAzure] = "078BC9",
+        [Colour.MaerskBlue] = "3592C3",
+        [Colour.MediumAzure] = "36AEBF",
+        [Colour.SkyBlue] = "7DBFDD",
+        [Colour.MediumBlue] = "5A93DB",
+        [Colour.BrightLightBlue] = "9FC3E9",
+        [Colour.LightBlue] = "B4D2E3",
+        [Colour.SandBlue] = "6074A1",
+        [Colour.DarkBlueViolet] = "2032B0",
+        [Colour.Violet] = "4354A3",
+        [Colour.BlueViolet] = "6874CA",
+        [Colour.MediumViolet] = "9.39E+07",
+        [Colour.LightViolet] = "C9CAE2",
+        [Colour.DarkPurple] = "3F3691",
+        [Colour.Purple] = "81007B",
+        [Colour.LightPurple] = "CD6298",
+        [Colour.MediumLavender] = "AC78BA",
+        [Colour.Lavender] = "E1D5ED",
+        [Colour.Magenta] = "923978",
+        [Colour.DarkPink] = "C870A0",
+        [Colour.MediumDarkPink] = "F785B1",
+        [Colour.BrightPink] = "E4ADC8",
+        [Colour.Pink] = "FC97AC",
+        [Colour.LightPink] = "FECCCF",
+        [Colour.TransClear] = "E6E3E0",
+        [Colour.TransRed] = "C91A09",
+        [Colour.TransOrange] = "F08F1C",
+        [Colour.TransYellow] = "F5CD2F",
+        [Colour.TransNeonGreen] = "F8F184",
+        [Colour.TransBrightGreen] = "D9E4A7",
+        [Colour.TransGreen] = "84B68D",
+        [Colour.TransLightBlue] = "AEEFEC",
+        [Colour.TransDarkBlue] = "0020A0",
+        [Colour.TransPurple] = "A5A5CB",
+        [Colour.TransDarkPink] = "DF6695",
+        [Colour.TransNeonOrange] = "FF800D",
+        [Colour.TransBrownOldTransBlack] = "884D31",
+        [Colour.TransBlack] = "414a4c",
+        [Colour.TransNeonYellow] = "DAB000",
+        [Colour.TransPink] = "E4ADC8",
+        [Colour.ChromeGold] = "BBA53D",
+        [Colour.ChromeSilver] = "E0E0E0",
+        [Colour.ChromeAntiqueBrass] = "645A4C",
+        [Colour.ChromeBlack] = "1B2A34",
+        [Colour.ChromeBlue] = "6C96BF",
+        [Colour.ChromeGreen] = "3CB371",
+        [Colour.ChromePink] = "AA4D8E",
+        [Colour.PearlWhite] = "F2F3F2",
+        [Colour.PearlVeryLightGray] = "ABADAC",
+        [Colour.PearlLightGray] = "9CA3A8",
+        [Colour.FlatSilver] = "898788",
+        [Colour.PearlDarkGray] = "575857",
+        [Colour.PearlBlack] = "0A1327",
+        [Colour.PearlLightGold] = "DCBC81",
+        [Colour.PearlGold] = "AA7F2E",
+        [Colour.ReddishGold] = "AC8247",
+        [Colour.FlatDarkGold] = "B48455",
+        [Colour.Copper] = "AE7A59",
+        [Colour.PearlSandBlue] = "7988A1",
+        [Colour.SatinTransClear] = "FCFCFC",
+        [Colour.MetallicSilver] = "A5A9B4",
+        [Colour.MetallicGreen] = "899B5F",
+        [Colour.MetallicGold] = "DBAC34",
+        [Colour.MilkyWhite] = "FFFFFF",
+        [Colour.GlowInDarkOpaque] = "D4D5C9",
+        [Colour.GlowInDarkTrans] = "BDC6AD",
+        [Colour.GlitterTransClear] = "FFFFFF",
+        [Colour.GlitterTransPurple] = "A5A5CB",
+        [Colour.GlitterTransDarkPink] = "DF6695",
+        [Colour.SpeckleBlackSilver] = "05131D",
+        [Colour.SpeckleBlackGold] = "05131D",
+        [Colour.SpeckleBlackCopper] = "05131D",
+        [Colour.SpeckleDBGraySilver] = "6C6E68",
+        [Colour.MxWhite] = "F4F4F4",
+        [Colour.MxLightBluishGray] = "AfB5C7",
+        [Colour.MxLightGray] = "9C9C9C",
+        [Colour.MxCharcoalGray] = "595D60",
+        [Colour.MxTileGray] = "6B5A5A",
+        [Colour.MxBlack] = "4D4C52",
+        [Colour.MxTileBrown] = "330000",
+        [Colour.MxTerracotta] = "5C5030",
+        [Colour.MxBrown] = "907450",
+        [Colour.MxBuff] = "DEC69C",
+        [Colour.MxRed] = "B52C20",
+        [Colour.MxPinkRed] = "F45C40",
+        [Colour.MxOrange] = "F47B30",
+        [Colour.MxLightOrange] = "F7AD63",
+        [Colour.MxLightYellow] = "FFE371",
+        [Colour.MxOchreYellow] = "FED557",
+        [Colour.MxLemon] = "BDC618",
+        [Colour.MxPastelGreen] = "7DB538",
+        [Colour.MxOliveGreen] = "7C9051",
+        [Colour.MxAquaGreen] = "27867E",
+        [Colour.MxTealBlue] = "467083",
+        [Colour.MxTileBlue] = "0057A6",
+        [Colour.MxMediumBlue] = "61AFFF",
+        [Colour.MxPastelBlue] = "68AECE",
+        [Colour.MxViolet] = "BD7D85",
+        [Colour.MxPink] = "F785B1",
+        [Colour.MxClear] = "FFFFFF",
+        [Colour.MxFoilDarkGray] = "595D60",
+        [Colour.MxFoilLightGray] = "9C9C9C",
+        [Colour.MxFoilDarkGreen] = "6400",
+        [Colour.MxFoilLightGreen] = "7DB538",
+        [Colour.MxFoilDarkBlue] = "0057A6",
+        [Colour.MxFoilLightBlue] = "68AECE",
+        [Colour.MxFoilViolet] = "4B0082",
+        [Colour.MxFoilRed] = "8B0000",
+        [Colour.MxFoilYellow] = "FED557",
+        [Colour.MxFoilOrange] = "F7AD63"
+    };
 
     public ColourMap()
     {
-        colourInfos = new List<ColourInfo>
+        ColourInfos = new List<ColourInfo>
         {
-            new ColourInfo("White", 1, Colour.White),
+            new ColourInfo("White", 1, Colour.White, true),
             new ColourInfo("Very Light Gray", 49, Colour.VeryLightGray),
             new ColourInfo("Very Light Bluish Gray", 99, Colour.VeryLightBluishGray),
-            new ColourInfo("Light Bluish Gray", 86, Colour.LightBluishGray),
-            new ColourInfo("Light Gray", 9, Colour.LightGray),
+            new ColourInfo("Light Bluish Gray", 86, Colour.LightBluishGray, true),
+            new ColourInfo("Light Gray", 9, Colour.LightGray, true),
             new ColourInfo("Dark Gray", 10, Colour.DarkGray),
-            new ColourInfo("Dark Bluish Gray", 85, Colour.DarkBluishGray),
-            new ColourInfo("Black", 11, Colour.Black),
-            new ColourInfo("Dark Red", 59, Colour.DarkRed),
-            new ColourInfo("Red", 5, Colour.Red),
+            new ColourInfo("Dark Bluish Gray", 85, Colour.DarkBluishGray, true),
+            new ColourInfo("Black", 11, Colour.Black, true),
+            new ColourInfo("Dark Red", 59, Colour.DarkRed, true),
+            new ColourInfo("Red", 5, Colour.Red, true),
             new ColourInfo("Coral", 220, Colour.Coral),
             new ColourInfo("Dark Salmon", 231, Colour.DarkSalmon),
             new ColourInfo("Salmon", 25, Colour.Salmon),
             new ColourInfo("Light Salmon", 26, Colour.LightSalmon),
             new ColourInfo("Sand Red", 58, Colour.SandRed),
-            new ColourInfo("Dark Brown", 120, Colour.DarkBrown),
+            new ColourInfo("Dark Brown", 120, Colour.DarkBrown, true),
             new ColourInfo("Brown", 8, Colour.Brown),
             new ColourInfo("Light Brown", 91, Colour.LightBrown),
             new ColourInfo("Medium Brown", 240, Colour.MediumBrown),
-            new ColourInfo("Reddish Brown", 88, Colour.ReddishBrown),
+            new ColourInfo("Reddish Brown", 88, Colour.ReddishBrown, true),
             new ColourInfo("Fabuland Brown", 106, Colour.FabulandBrown),
-            new ColourInfo("Dark Tan", 69, Colour.DarkTan),
+            new ColourInfo("Dark Tan", 69, Colour.DarkTan, true),
             new ColourInfo("Medium Tan", 241, Colour.MediumTan),
-            new ColourInfo("Tan", 2, Colour.Tan),
-            new ColourInfo("Light Nougat", 90, Colour.LightNougat),
+            new ColourInfo("Tan", 2, Colour.Tan, true),
+            new ColourInfo("Light Nougat", 90, Colour.LightNougat, true),
             new ColourInfo("Nougat", 28, Colour.Nougat),
-            new ColourInfo("Medium Nougat", 150, Colour.MediumNougat),
+            new ColourInfo("Medium Nougat", 150, Colour.MediumNougat, true),
             new ColourInfo("Dark Nougat", 225, Colour.DarkNougat),
             new ColourInfo("Fabuland Orange", 160, Colour.FabulandOrange),
             new ColourInfo("Earth Orange", 29, Colour.EarthOrange),
-            new ColourInfo("Dark Orange", 68, Colour.DarkOrange),
+            new ColourInfo("Dark Orange", 68, Colour.DarkOrange, true),
             new ColourInfo("Rust", 27, Colour.Rust),
             new ColourInfo("Neon Orange", 165, Colour.NeonOrange),
-            new ColourInfo("Orange", 4, Colour.Orange),
+            new ColourInfo("Orange", 4, Colour.Orange, true),
             new ColourInfo("Medium Orange", 31, Colour.MediumOrange),
-            new ColourInfo("Bright Light Orange", 110, Colour.BrightLightOrange),
+            new ColourInfo("Bright Light Orange", 110, Colour.BrightLightOrange, true),
             new ColourInfo("Light Orange", 32, Colour.LightOrange),
             new ColourInfo("Very Light Orange", 96, Colour.VeryLightOrange),
             new ColourInfo("Dark Yellow", 161, Colour.DarkYellow),
-            new ColourInfo("Yellow", 3, Colour.Yellow),
+            new ColourInfo("Yellow", 3, Colour.Yellow, true),
             new ColourInfo("Light Yellow", 33, Colour.LightYellow),
-            new ColourInfo("Bright Light Yellow", 103, Colour.BrightLightYellow),
+            new ColourInfo("Bright Light Yellow", 103, Colour.BrightLightYellow, true),
             new ColourInfo("Neon Yellow", 236, Colour.NeonYellow),
             new ColourInfo("Neon Green", 166, Colour.NeonGreen),
             new ColourInfo("Light Lime", 35, Colour.LightLime),
             new ColourInfo("Yellowish Green", 158, Colour.YellowishGreen),
             new ColourInfo("Medium Lime", 76, Colour.MediumLime),
             new ColourInfo("Fabuland Lime", 248, Colour.FabulandLime),
-            new ColourInfo("Lime", 34, Colour.Lime),
+            new ColourInfo("Lime", 34, Colour.Lime, true),
             new ColourInfo("Dark Olive Green", 242, Colour.DarkOliveGreen),
-            new ColourInfo("Olive Green", 155, Colour.OliveGreen),
-            new ColourInfo("Dark Green", 80, Colour.DarkGreen),
-            new ColourInfo("Green", 6, Colour.Green),
+            new ColourInfo("Olive Green", 155, Colour.OliveGreen, true),
+            new ColourInfo("Dark Green", 80, Colour.DarkGreen, true),
+            new ColourInfo("Green", 6, Colour.Green, true),
             new ColourInfo("Bright Green", 36, Colour.BrightGreen),
             new ColourInfo("Medium Green", 37, Colour.MediumGreen),
             new ColourInfo("Light Green", 38, Colour.LightGreen),
-            new ColourInfo("Sand Green", 48, Colour.SandGreen),
-            new ColourInfo("Dark Turquoise", 39, Colour.DarkTurquoise),
+            new ColourInfo("Sand Green", 48, Colour.SandGreen, true),
+            new ColourInfo("Dark Turquoise", 39, Colour.DarkTurquoise, true),
             new ColourInfo("Light Turquoise", 40, Colour.LightTurquoise),
             new ColourInfo("Aqua", 41, Colour.Aqua),
             new ColourInfo("Light Aqua", 152, Colour.LightAqua),
-            new ColourInfo("Dark Blue", 63, Colour.DarkBlue),
-            new ColourInfo("Blue", 7, Colour.Blue),
-            new ColourInfo("Dark Azure", 153, Colour.DarkAzure),
+            new ColourInfo("Dark Blue", 63, Colour.DarkBlue, true),
+            new ColourInfo("Blue", 7, Colour.Blue, true),
+            new ColourInfo("Dark Azure", 153, Colour.DarkAzure, true),
             new ColourInfo("Little Robots Blue", 247, Colour.LittleRobotsBlue),
             new ColourInfo("Maersk Blue", 72, Colour.MaerskBlue),
-            new ColourInfo("Medium Azure", 156, Colour.MediumAzure),
+            new ColourInfo("Medium Azure", 156, Colour.MediumAzure, true),
             new ColourInfo("Sky Blue", 87, Colour.SkyBlue),
             new ColourInfo("Medium Blue", 42, Colour.MediumBlue),
             new ColourInfo("Bright Light Blue", 105, Colour.BrightLightBlue),
             new ColourInfo("Light Blue", 62, Colour.LightBlue),
-            new ColourInfo("Sand Blue", 55, Colour.SandBlue),
+            new ColourInfo("Sand Blue", 55, Colour.SandBlue, true),
             new ColourInfo("Dark Blue-Violet", 109, Colour.DarkBlueViolet),
             new ColourInfo("Violet", 43, Colour.Violet),
             new ColourInfo("Blue-Violet", 97, Colour.BlueViolet),
@@ -98,34 +268,34 @@ public class ColourMap
             new ColourInfo("Magenta", 71, Colour.Magenta),
             new ColourInfo("Dark Pink", 47, Colour.DarkPink),
             new ColourInfo("Medium Dark Pink", 94, Colour.MediumDarkPink),
-            new ColourInfo("Bright Pink", 104, Colour.BrightPink),
+            new ColourInfo("Bright Pink", 104, Colour.BrightPink, true),
             new ColourInfo("Pink", 23, Colour.Pink),
             new ColourInfo("Light Pink", 56, Colour.LightPink),
-            new ColourInfo("Trans-Clear", 12, Colour.TransClear),
-            new ColourInfo("Trans-Brown (Old Trans-Black)", 13, Colour.TransBrownOldTransBlack),
-            new ColourInfo("Trans-Black (2023)", 251, Colour.TransBlack),
-            new ColourInfo("Trans-Red", 17, Colour.TransRed),
-            new ColourInfo("Trans-Neon Orange", 18, Colour.TransNeonOrange),
-            new ColourInfo("Trans-Orange", 98, Colour.TransOrange),
+            new ColourInfo("Trans-Clear", 12, Colour.TransClear, true),
+            new ColourInfo("Trans-Brown (Old Trans-Black)", 13, Colour.TransBrownOldTransBlack, true),
+            new ColourInfo("Trans-Black (2023)", 251, Colour.TransBlack, true),
+            new ColourInfo("Trans-Red", 17, Colour.TransRed, true),
+            new ColourInfo("Trans-Neon Orange", 18, Colour.TransNeonOrange, true),
+            new ColourInfo("Trans-Orange", 98, Colour.TransOrange, true),
             new ColourInfo("Trans-Light Orange", 164, Colour.TransLightOrange),
-            new ColourInfo("Trans-Neon Yellow", 121, Colour.TransNeonYellow),
-            new ColourInfo("Trans-Yellow", 19, Colour.TransYellow),
-            new ColourInfo("Trans-Neon Green", 16, Colour.TransNeonGreen),
-            new ColourInfo("Trans-Bright Green", 108, Colour.TransBrightGreen),
+            new ColourInfo("Trans-Neon Yellow", 121, Colour.TransNeonYellow, true),
+            new ColourInfo("Trans-Yellow", 19, Colour.TransYellow, true),
+            new ColourInfo("Trans-Neon Green", 16, Colour.TransNeonGreen, true),
+            new ColourInfo("Trans-Bright Green", 108, Colour.TransBrightGreen, true),
             new ColourInfo("Trans-Light Green", 221, Colour.TransLightGreen),
             new ColourInfo("Trans-Light Bright Green", 226, Colour.TransLightBrightGreen),
-            new ColourInfo("Trans-Green", 20, Colour.TransGreen),
-            new ColourInfo("Trans-Dark Blue", 14, Colour.TransDarkBlue),
+            new ColourInfo("Trans-Green", 20, Colour.TransGreen, true),
+            new ColourInfo("Trans-Dark Blue", 14, Colour.TransDarkBlue, true),
             new ColourInfo("Trans-Medium Blue", 74, Colour.TransMediumBlue),
-            new ColourInfo("Trans-Light Blue", 15, Colour.TransLightBlue),
+            new ColourInfo("Trans-Light Blue", 15, Colour.TransLightBlue, true),
             new ColourInfo("Trans-Aqua", 113, Colour.TransAqua),
             new ColourInfo("Trans-Light Purple", 114, Colour.TransLightPurple),
             new ColourInfo("Trans-Medium Purple", 234, Colour.TransMediumPurple),
-            new ColourInfo("Trans-Purple", 51, Colour.TransPurple),
-            new ColourInfo("Trans-Dark Pink", 50, Colour.TransDarkPink),
+            new ColourInfo("Trans-Purple", 51, Colour.TransPurple, true),
+            new ColourInfo("Trans-Dark Pink", 50, Colour.TransDarkPink, true),
             new ColourInfo("Trans-Pink", 107, Colour.TransPink),
-            new ColourInfo("Chrome Gold", 21, Colour.ChromeGold),
-            new ColourInfo("Chrome Silver", 22, Colour.ChromeSilver),
+            new ColourInfo("Chrome Gold", 21, Colour.ChromeGold, true),
+            new ColourInfo("Chrome Silver", 22, Colour.ChromeSilver, true),
             new ColourInfo("Chrome Antique Brass", 57, Colour.ChromeAntiqueBrass),
             new ColourInfo("Chrome Black", 122, Colour.ChromeBlack),
             new ColourInfo("Chrome Blue", 52, Colour.ChromeBlue),
@@ -133,16 +303,16 @@ public class ColourMap
             new ColourInfo("Chrome Pink", 82, Colour.ChromePink),
             new ColourInfo("Pearl White", 83, Colour.PearlWhite),
             new ColourInfo("Pearl Very Light Gray", 119, Colour.PearlVeryLightGray),
-            new ColourInfo("Pearl Light Gray", 66, Colour.PearlLightGray),
-            new ColourInfo("Flat Silver", 95, Colour.FlatSilver),
+            new ColourInfo("Pearl Light Gray", 66, Colour.PearlLightGray, true),
+            new ColourInfo("Flat Silver", 95, Colour.FlatSilver, true),
             new ColourInfo("Bionicle Silver", 239, Colour.BionicleSilver),
-            new ColourInfo("Pearl Dark Gray", 77, Colour.PearlDarkGray),
+            new ColourInfo("Pearl Dark Gray", 77, Colour.PearlDarkGray, true),
             new ColourInfo("Pearl Black", 244, Colour.PearlBlack),
             new ColourInfo("Pearl Light Gold", 61, Colour.PearlLightGold),
-            new ColourInfo("Pearl Gold", 115, Colour.PearlGold),
+            new ColourInfo("Pearl Gold", 115, Colour.PearlGold, true),
             new ColourInfo("Reddish Gold", 235, Colour.ReddishGold),
             new ColourInfo("Bionicle Gold", 238, Colour.BionicleGold),
-            new ColourInfo("Flat Dark Gold", 81, Colour.FlatDarkGold),
+            new ColourInfo("Flat Dark Gold", 81, Colour.FlatDarkGold, true),
             new ColourInfo("Reddish Copper", 249, Colour.ReddishCopper),
             new ColourInfo("Copper", 84, Colour.Copper),
             new ColourInfo("Bionicl eCopper", 237, Colour.BionicleCopper),
@@ -155,12 +325,12 @@ public class ColourMap
             new ColourInfo("Satin Trans-Dark Blue", 232, Colour.SatinTransDarkBlue),
             new ColourInfo("Satin Trans-Purple", 230, Colour.SatinTransPurple),
             new ColourInfo("Satin Trans-Dark Pink", 224, Colour.SatinTransDarkPink),
-            new ColourInfo("Metallic Silver", 67, Colour.MetallicSilver),
+            new ColourInfo("Metallic Silver", 67, Colour.MetallicSilver, true),
             new ColourInfo("Metallic Green", 70, Colour.MetallicGreen),
-            new ColourInfo("Metallic Gold", 65, Colour.MetallicGold),
+            new ColourInfo("Metallic Gold", 65, Colour.MetallicGold, true),
             new ColourInfo("Metallic Copper", 250, Colour.MetallicCopper),
             new ColourInfo("Milky White", 60, Colour.MilkyWhite),
-            new ColourInfo("Glow In Dark White", 159, Colour.GlowInDarkWhite),
+            new ColourInfo("Glow In Dark White", 159, Colour.GlowInDarkWhite, true),
             new ColourInfo("Glow In Dark Opaque", 46, Colour.GlowInDarkOpaque),
             new ColourInfo("Glow In Dark Trans", 118, Colour.GlowInDarkTrans),
             new ColourInfo("Glitter Trans-Clear", 101, Colour.GlitterTransClear),
@@ -215,42 +385,42 @@ public class ColourMap
 
     public bool ContainsColour(string name)
     {
-        return colourInfos.Any(e => e.Name == name);
+        return ColourInfos.Any(e => e.Name == name);
     }
 
     public bool ContainsColour(Colour colour)
     {
-        return colourInfos.Any(e => e.EnumValue == colour);
+        return ColourInfos.Any(e => e.EnumValue == colour);
     }
 
     public string? GetNameById(int id)
     {
-        return colourInfos.FirstOrDefault(ci => ci.Id == id)?.Name;
+        return ColourInfos.FirstOrDefault(ci => ci.Id == id)?.Name;
     }
 
     public int? GetIdByName(string name)
     {
-        return colourInfos.FirstOrDefault(ci => ci.Name == name)?.Id;
+        return ColourInfos.FirstOrDefault(ci => ci.Name == name)?.Id;
     }
 
     public Colour? GetEnumById(int id)
     {
-        return colourInfos.FirstOrDefault(ci => ci.Id == id)?.EnumValue;
+        return ColourInfos.FirstOrDefault(ci => ci.Id == id)?.EnumValue;
     }
 
     public Colour? GetEnumByName(string name)
     {
-        return colourInfos.FirstOrDefault(ci => ci.Name == name)?.EnumValue;
+        return ColourInfos.FirstOrDefault(ci => ci.Name == name)?.EnumValue;
     }
 
     public int? GetIdByEnum(Colour enumValue)
     {
-        return colourInfos.FirstOrDefault(ci => ci.EnumValue == enumValue)?.Id;
+        return ColourInfos.FirstOrDefault(ci => ci.EnumValue == enumValue)?.Id;
     }
 
     public string? GetNameByEnum(Colour enumValue)
     {
-        return colourInfos.FirstOrDefault(ci => ci.EnumValue == enumValue)?.Name;
+        return ColourInfos.FirstOrDefault(ci => ci.EnumValue == enumValue)?.Name;
     }
 
     public class ColourInfo
@@ -258,12 +428,25 @@ public class ColourMap
         public string Name { get; }
         public int Id { get; }
         public Colour EnumValue { get; }
+        public bool IsCommon { get; }
+        public string RgbValue { get; }
 
         public ColourInfo(string name, int id, Colour enumValue)
         {
             Name = name;
             Id = id;
             EnumValue = enumValue;
+            RgbValue = RgbValues.ContainsKey(enumValue) ? RgbValues[enumValue] : "FFFFFF";
+            IsCommon = false;
+        }
+
+        public ColourInfo(string name, int id, Colour enumValue, bool isCommon)
+        {
+            Name = name;
+            Id = id;
+            EnumValue = enumValue;
+            IsCommon = isCommon;
+            RgbValue = RgbValues.ContainsKey(enumValue) ? RgbValues[enumValue] : "FFFFFF";
         }
     }
 }

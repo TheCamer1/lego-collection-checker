@@ -1,0 +1,35 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lego Piece Checker</title>
+    <style>
+        .colour-box {
+            display: inline-block;
+            width: 100px;
+            height: 50px;
+            margin: 5px;
+            color: white;
+            font-size: 12px;
+            word-wrap: normal;
+            line-height: 50px;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .selected {
+            border: 3px solid blue;
+        }
+    </style>
+</head>
+<body>
+    <h1>Lego Piece Checker</h1>
+    <div id="colourContainer"></div>
+    <input type="text" id="pieceId" placeholder="Enter Piece ID">
+    <button onclick="checkPiece()">Go</button>
+    <div id="result"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
