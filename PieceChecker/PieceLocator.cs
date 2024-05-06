@@ -201,7 +201,7 @@ public class PieceLocator
         sb.AppendLine($"{(isComplete ? "Complete" : "Incomplete")}:");
 
         int totalInModels = 0;
-        Dictionary<int, int> colourTotals = new();
+        Dictionary<int, int> colourTotals = [];
 
         foreach (var model in models)
         {
