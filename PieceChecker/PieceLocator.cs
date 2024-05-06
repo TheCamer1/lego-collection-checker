@@ -1,36 +1,66 @@
 ﻿using LegoCollectionChecker.Common;
+using System.Diagnostics;
 using System.Drawing;
 using System.Text;
 
 namespace LegoCollectionChecker.PieceChecker;
 
-public class PieceLocator
+public interface IPieceLocator
+{
+    string CheckPiece(string itemId, Colour color, bool ignoreColour = false);
+    string GetExcess(string itemId, int colorId, bool ignoreColour = false);
+    int GetExcess(string itemId, int colorId, StringBuilder sb, bool ignoreColour = false);
+}
+
+public class PieceLocator : IPieceLocator
 {
     private readonly Dictionary<string, LegoPiece> completeCollection;
-    private readonly string[] completeFiles;
-    private readonly string[] incompleteFiles;
+    private readonly Dictionary<string, List<LegoPiece>> completeModels;
+    private readonly Dictionary<string, List<LegoPiece>> incompleteModels;
     private readonly ColourMap colourMap;
 
     public PieceLocator()
     {
+        var stopwatch = Stopwatch.StartNew();
         completeCollection = CollectionLoader.LoadCollection("../Common/CompleteCollection.xml");
-        completeFiles = Directory.GetFiles($"../Common/CompletedModels", "*.xml");
-        incompleteFiles = Directory.GetFiles($"../Common/IncompleteModels", "*.xml");
+        completeModels = LoadModels("../Common/CompletedModels");
+        incompleteModels = LoadModels("../Common/IncompleteModels");
         colourMap = new ColourMap();
+        stopwatch.Stop();
+        Console.WriteLine($"PieceLocator constructor: {stopwatch.ElapsedMilliseconds} ms");
+    }
+
+    private Dictionary<string, List<LegoPiece>> LoadModels(string directory)
+    {
+        var models = new Dictionary<string, List<LegoPiece>>();
+        var files = Directory.GetFiles(directory, "*.xml");
+
+        foreach (var file in files)
+        {
+            var modelPieces = CollectionLoader.LoadCollection(file);
+            models.Add(Path.GetFileName(file), modelPieces.Values.ToList());
+        }
+
+        return models;
     }
 
     public string CheckPiece(string itemId, Colour color, bool ignoreColour = false)
     {
+        var stopwatch = Stopwatch.StartNew();
         if (!colourMap.ContainsColour(color))
         {
             throw new InvalidOperationException($"Unknown colour name: {color}");
         }
         var colorId = colourMap.GetIdByEnum(color)!.Value;
-        return GetExcess(itemId, colorId, ignoreColour);
+        var result = GetExcess(itemId, colorId, ignoreColour);
+        stopwatch.Stop();
+        Console.WriteLine($"CheckPiece: {stopwatch.ElapsedMilliseconds} ms");
+        return result;
     }
 
     public string GetExcess(string itemId, int colorId, bool ignoreColour = false)
     {
+        var stopwatch = Stopwatch.StartNew();
         var sb = new StringBuilder();
 
         GetExcess(itemId, colorId, sb, ignoreColour);
@@ -38,11 +68,14 @@ public class PieceLocator
         var color = colourMap.GetEnumById(colorId);
         sb.Insert(0, $"Piece {itemId} in {color}\r\n\r\n");
 
+        stopwatch.Stop();
+        Console.WriteLine($"GetExcess: {stopwatch.ElapsedMilliseconds} ms");
         return sb.ToString();
     }
 
     public int GetExcess(string itemId, int colorId, StringBuilder sb, bool ignoreColour = false)
     {
+        var stopwatch = Stopwatch.StartNew();
         var name = colourMap.GetNameById(colorId);
 
         sb.AppendLine();
@@ -53,14 +86,18 @@ public class PieceLocator
         var completeAmounts = DisplayModelAmounts(itemId, colorId, ignoreColour, true, sb);
 
         sb.AppendLine();
+        int result;
         if (ignoreColour)
         {
-            return PrintMissingByColour(completeAmounts, incompleteAmounts, collectionAmounts, sb);
+            result = PrintMissingByColour(completeAmounts, incompleteAmounts, collectionAmounts, sb);
         }
         else
         {
-            return PrintMissing(colorId, completeAmounts, incompleteAmounts, collectionAmounts, sb);
+            result = PrintMissing(colorId, completeAmounts, incompleteAmounts, collectionAmounts, sb);
         }
+        stopwatch.Stop();
+        Console.WriteLine($"GetExcess (inner): {stopwatch.ElapsedMilliseconds} ms");
+        return result;
     }
 
     private int PrintMissing(
@@ -196,12 +233,13 @@ public class PieceLocator
 
     private Dictionary<int, int> DisplayModelAmounts(string itemId, int colorId, bool isColorInvariant, bool isComplete, StringBuilder sb)
     {
+        var stopwatch = Stopwatch.StartNew();
         var alternativeIds = AlternativeDictionary.GetAlternativeItemIds(itemId);
-        var models = ListModelsContainingPiece(itemId, isComplete);
+        var models = isComplete ? completeModels : incompleteModels;
         sb.AppendLine($"{(isComplete ? "Complete" : "Incomplete")}:");
 
         int totalInModels = 0;
-        Dictionary<int, int> colourTotals = [];
+        Dictionary<int, int> colourTotals = new Dictionary<int, int>();
 
         foreach (var model in models)
         {
@@ -253,6 +291,8 @@ public class PieceLocator
 
         sb.AppendLine($"{(isComplete ? "Completed" : "Incomplete")} Total: {totalInModels}");
 
+        stopwatch.Stop();
+        Console.WriteLine($"DisplayModelAmounts: {stopwatch.ElapsedMilliseconds} ms");
         return colourTotals;
     }
 
@@ -277,40 +317,5 @@ public class PieceLocator
         }
 
         return totalQuantities;
-    }
-
-    public Dictionary<string, List<LegoPiece>> ListModelsContainingPiece(string itemId, bool isComplete)
-    {
-        var modelsContainingPiece = new Dictionary<string, List<LegoPiece>>();
-        var alternativeIds = AlternativeDictionary.GetAlternativeItemIds(itemId);
-
-        var files = isComplete ? completeFiles : incompleteFiles;
-
-        Parallel.ForEach(files, file =>
-        {
-            var modelPieces = CollectionLoader.LoadCollection(file);
-            foreach (var altId in alternativeIds)
-            {
-                var matchingPieces = modelPieces.Values.Where(piece => piece.ItemId == altId).ToList();
-
-                if (matchingPieces.Count > 0)
-                {
-                    var filename = Path.GetFileName(file);
-                    lock (modelsContainingPiece)
-                    {
-                        if (modelsContainingPiece.ContainsKey(filename))
-                        {
-                            modelsContainingPiece[filename].AddRange(matchingPieces);
-                        }
-                        else
-                        {
-                            modelsContainingPiece.Add(filename, matchingPieces);
-                        }
-                    }
-                }
-            }
-        });
-
-        return modelsContainingPiece;
     }
 }

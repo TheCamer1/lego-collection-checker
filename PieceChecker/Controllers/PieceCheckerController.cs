@@ -1,6 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using LegoCollectionChecker.Common;
-using static LegoCollectionChecker.Common.ColourMap;
+﻿using LegoCollectionChecker.Common;
+using Microsoft.AspNetCore.Mvc;
 
 namespace LegoCollectionChecker.PieceChecker.Controllers;
 
@@ -8,26 +7,25 @@ namespace LegoCollectionChecker.PieceChecker.Controllers;
 [Route("[controller]")]
 public class PieceCheckerController : ControllerBase
 {
-    private readonly PieceLocator pieceLocator;
-    private readonly IEnumerable<ColourInfo> commonColours;
+    private readonly IPieceLocator _pieceLocator;
 
-    public PieceCheckerController()
+    public PieceCheckerController(IPieceLocator pieceLocator)
     {
-        pieceLocator = new PieceLocator();
-        var colourMap = new ColourMap();
-        commonColours = colourMap.ColourInfos.Where(e => e.IsCommon);
+        _pieceLocator = pieceLocator;
     }
 
     [HttpGet("checkpiece")]
     public IActionResult CheckPiece(string id, Colour colour, bool ignoreColour)
     {
-        var result = pieceLocator.CheckPiece(id, colour, ignoreColour);
+        var result = _pieceLocator.CheckPiece(id, colour, ignoreColour);
         return Ok(result);
     }
 
     [HttpGet("colours")]
     public IActionResult GetAllColours()
     {
+        var colourMap = new ColourMap();
+        var commonColours = colourMap.ColourInfos.Where(e => e.IsCommon);
         return Ok(commonColours);
     }
 }
