@@ -182,7 +182,7 @@ public class ColourMap
             new ColourInfo("Very Light Gray", 49, Colour.VeryLightGray),
             new ColourInfo("Very Light Bluish Gray", 99, Colour.VeryLightBluishGray),
             new ColourInfo("Light Bluish Gray", 86, Colour.LightBluishGray, true),
-            new ColourInfo("Light Gray", 9, Colour.LightGray, true),
+            new ColourInfo("Light Gray", 9, Colour.LightGray),
             new ColourInfo("Dark Gray", 10, Colour.DarkGray),
             new ColourInfo("Dark Bluish Gray", 85, Colour.DarkBluishGray, true),
             new ColourInfo("Black", 11, Colour.Black, true),

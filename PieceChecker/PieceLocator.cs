@@ -8,34 +8,34 @@ public class PieceLocator
     private readonly Dictionary<string, LegoPiece> completeCollection;
     private readonly string[] completeFiles;
     private readonly string[] incompleteFiles;
+    private readonly ColourMap colourMap;
 
     public PieceLocator()
     {
         completeCollection = CollectionLoader.LoadCollection("../Common/CompleteCollection.xml");
         completeFiles = Directory.GetFiles($"../Common/CompletedModels", "*.xml");
         incompleteFiles = Directory.GetFiles($"../Common/IncompleteModels", "*.xml");
+        colourMap = new ColourMap();
     }
 
     public string CheckPiece(string itemId, Colour color, bool ignoreColour = false)
     {
-        var colourMap = new ColourMap();
         if (!colourMap.ContainsColour(color))
         {
             throw new InvalidOperationException($"Unknown colour name: {color}");
         }
         var colorId = colourMap.GetIdByEnum(color)!.Value;
-        return GetExcess(completeCollection, itemId, colorId, ignoreColour);
+        return GetExcess(itemId, colorId, ignoreColour);
     }
 
-    public string GetExcess(Dictionary<string, LegoPiece> completeCollection, string itemId, int colorId, bool ignoreColour = false)
+    public string GetExcess(string itemId, int colorId, bool ignoreColour = false)
     {
-        var colourMap = new ColourMap();
         var name = colourMap.GetNameById(colorId);
         var color = colourMap.GetEnumById(colorId);
 
         var sb = new StringBuilder();
         sb.AppendLine();
-        var collectionAmounts = DisplayCompleteCollectionAmounts(itemId, name!, colorId, ignoreColour, completeCollection, sb);
+        var collectionAmounts = DisplayCompleteCollectionAmounts(itemId, name!, colorId, ignoreColour, sb);
         sb.AppendLine();
         var incompleteAmounts = DisplayModelAmounts(itemId, colorId, ignoreColour, false, sb);
         sb.AppendLine();
@@ -44,7 +44,7 @@ public class PieceLocator
         sb.AppendLine();
         if (ignoreColour)
         {
-            PrintMissingByColour(colourMap, completeAmounts, incompleteAmounts, collectionAmounts, sb);
+            PrintMissingByColour(completeAmounts, incompleteAmounts, collectionAmounts, sb);
         }
         else
         {
@@ -83,7 +83,6 @@ public class PieceLocator
     }
 
     private void PrintMissingByColour(
-        ColourMap colourMap,
         Dictionary<int, int> completeAmounts,
         Dictionary<int, int> incompleteAmounts,
         Dictionary<int, int> collectionAmounts,
@@ -99,15 +98,10 @@ public class PieceLocator
         allColours.UnionWith(incompleteAmounts.Keys);
         allColours.UnionWith(collectionAmounts.Keys);
 
-        // Create a list of tuples containing the colour name and ID, and sort it
-        var sortedColours = allColours
-            .Select(id => (Name: colourMap.GetNameById(id) ?? "Unknown colour", Id: id))
-            .OrderBy(tuple => tuple.Name)
-            .ToList();
-
-        // Iterate over sorted colours to identify missing and excess pieces
-        foreach (var (colourName, colourId) in sortedColours)
+        // Iterate over all colours to identify missing and excess pieces
+        foreach (var colourId in allColours)
         {
+            var colourName = colourMap.GetNameById(colourId) ?? "Unknown colour";
             var completeAmount = completeAmounts.GetValueOrDefault(colourId, 0);
             var incompleteAmount = incompleteAmounts.GetValueOrDefault(colourId, 0);
             var collectionAmount = collectionAmounts.GetValueOrDefault(colourId, 0);
@@ -131,15 +125,19 @@ public class PieceLocator
             }
         }
 
-        foreach (var entry in missingList.OrderBy(s => s))
+        missingList.Sort();
+        excessList.Sort();
+        allUsedList.Sort();
+
+        foreach (var entry in missingList)
         {
             sb.Insert(0, entry + "\r\n");
         }
-        foreach (var entry in excessList.OrderBy(s => s))
+        foreach (var entry in excessList)
         {
             sb.Insert(0, entry + "\r\n");
         }
-        foreach (var entry in allUsedList.OrderBy(s => s))
+        foreach (var entry in allUsedList)
         {
             sb.Insert(0, entry + "\r\n");
         }
@@ -159,25 +157,20 @@ public class PieceLocator
         string colorName,
         int colorId,
         bool isColorInvariant,
-        Dictionary<string, LegoPiece> completeCollection,
         StringBuilder sb)
     {
-        var colourMap = new ColourMap();
         // Get the total quantity in the complete collection
-        var totalQuantitiesInCollection = CalculateTotalQuantity(itemId, completeCollection, isColorInvariant, colorId);
+        var totalQuantitiesInCollection = CalculateTotalQuantity(itemId, isColorInvariant, colorId);
         sb.AppendLine("Complete Collection:");
 
         if (isColorInvariant)
         {
-            // Create a list of tuples containing the colour name and ID, and sort it
-            var sortedColours = totalQuantitiesInCollection.Keys
-                .Select(id => (Name: colourMap.GetNameById(id) ?? "Unknown color", Id: id))
-                .OrderBy(tuple => tuple.Name)
-                .ToList();
+            var sortedColours = totalQuantitiesInCollection.Keys.OrderBy(id => colourMap.GetNameById(id));
 
             // Iterate over sorted colours to display their quantities
-            foreach (var (colourName, colourId) in sortedColours)
+            foreach (var colourId in sortedColours)
             {
+                var colourName = colourMap.GetNameById(colourId) ?? "Unknown color";
                 sb.AppendLine($"{colourName}: {totalQuantitiesInCollection[colourId]}");
             }
 
@@ -185,7 +178,7 @@ public class PieceLocator
         }
         else
         {
-            sb.AppendLine($"{colorName}: {(totalQuantitiesInCollection.ContainsKey(colorId) ? totalQuantitiesInCollection[colorId] : 0)}");
+            sb.AppendLine($"{colorName}: {totalQuantitiesInCollection.GetValueOrDefault(colorId, 0)}");
         }
 
         return totalQuantitiesInCollection;
@@ -193,18 +186,17 @@ public class PieceLocator
 
     private Dictionary<int, int> DisplayModelAmounts(string itemId, int colorId, bool isColorInvariant, bool isComplete, StringBuilder sb)
     {
-        var colourMap = new ColourMap();
         var alternativeIds = AlternativeDictionary.GetAlternativeItemIds(itemId);
         var models = ListModelsContainingPiece(itemId, isComplete);
         sb.AppendLine($"{(isComplete ? "Complete" : "Incomplete")}:");
 
         int totalInModels = 0;
-        Dictionary<int, int> colourTotals = new(); // To keep track of individual colour totals
+        Dictionary<int, int> colourTotals = new();
 
         foreach (var model in models)
         {
             int modelQuantity = 0;
-            StringBuilder colorQuantities = new StringBuilder();
+            var colorQuantities = new StringBuilder();
 
             foreach (var piece in model.Value)
             {
@@ -216,42 +208,35 @@ public class PieceLocator
                     totalInModels += piece.Quantity;
                     modelQuantity += piece.Quantity;
 
-                    // Sum up the amounts per colour
-                    if (colourTotals.ContainsKey(piece.Color))
-                    {
-                        colourTotals[piece.Color] += piece.Quantity;
-                    }
-                    else
-                    {
-                        colourTotals[piece.Color] = piece.Quantity;
-                    }
+                    colourTotals.TryGetValue(piece.Color, out int currentTotal);
+                    colourTotals[piece.Color] = currentTotal + piece.Quantity;
                 }
             }
 
             if (modelQuantity > 0)
             {
+                var modelName = Path.GetFileNameWithoutExtension(model.Key);
                 if (isColorInvariant)
                 {
-                    sb.AppendLine($"{model.Key.Replace(".xml", "")}: {colorQuantities.ToString().TrimEnd(',', ' ')}");
+                    sb.AppendLine($"{modelName}: {colorQuantities.ToString().TrimEnd(',', ' ')}");
                 }
                 else
                 {
-                    sb.AppendLine($"{model.Key.Replace(".xml", "")}: {modelQuantity}");
+                    sb.AppendLine($"{modelName}: {modelQuantity}");
                 }
             }
         }
 
         sb.AppendLine();
+
         // Print individual colour totals in alphabetical order
         if (isColorInvariant)
         {
-            var sortedColours = colourTotals.Keys
-                .Select(id => (Name: colourMap.GetNameById(id) ?? "Unknown color", Id: id))
-                .OrderBy(tuple => tuple.Name)
-                .ToList();
+            var sortedColours = colourTotals.Keys.OrderBy(id => colourMap.GetNameById(id));
 
-            foreach (var (colourName, colourId) in sortedColours)
+            foreach (var colourId in sortedColours)
             {
+                var colourName = colourMap.GetNameById(colourId) ?? "Unknown color";
                 sb.AppendLine($"{colourName}: {colourTotals[colourId]}");
             }
         }
@@ -263,7 +248,6 @@ public class PieceLocator
 
     private Dictionary<int, int> CalculateTotalQuantity(
         string itemId,
-        Dictionary<string, LegoPiece> completeCollection,
         bool isColorInvariant,
         int colorId)
     {
@@ -272,24 +256,12 @@ public class PieceLocator
 
         foreach (var altId in alternativeIds)
         {
-            foreach (var pair in completeCollection)
+            foreach (var piece in completeCollection.Values)
             {
-                var piece = pair.Value;
-                if (piece.ItemId != altId)
+                if (piece.ItemId == altId && (isColorInvariant || piece.Color == colorId))
                 {
-                    continue;
-                }
-                if (!isColorInvariant && piece.Color != colorId)
-                {
-                    continue;
-                }
-                if (totalQuantities.ContainsKey(piece.Color))
-                {
-                    totalQuantities[piece.Color] += piece.Quantity;
-                }
-                else
-                {
-                    totalQuantities[piece.Color] = piece.Quantity;
+                    totalQuantities.TryGetValue(piece.Color, out int currentQuantity);
+                    totalQuantities[piece.Color] = currentQuantity + piece.Quantity;
                 }
             }
         }
@@ -304,7 +276,7 @@ public class PieceLocator
 
         var files = isComplete ? completeFiles : incompleteFiles;
 
-        foreach (var file in files)
+        Parallel.ForEach(files, file =>
         {
             var modelPieces = CollectionLoader.LoadCollection(file);
             foreach (var altId in alternativeIds)
@@ -314,17 +286,20 @@ public class PieceLocator
                 if (matchingPieces.Count > 0)
                 {
                     var filename = Path.GetFileName(file);
-                    if (modelsContainingPiece.ContainsKey(filename))
+                    lock (modelsContainingPiece)
                     {
-                        modelsContainingPiece[filename].AddRange(matchingPieces);
-                    }
-                    else
-                    {
-                        modelsContainingPiece.Add(filename, matchingPieces);
+                        if (modelsContainingPiece.ContainsKey(filename))
+                        {
+                            modelsContainingPiece[filename].AddRange(matchingPieces);
+                        }
+                        else
+                        {
+                            modelsContainingPiece.Add(filename, matchingPieces);
+                        }
                     }
                 }
             }
-        }
+        });
 
         return modelsContainingPiece;
     }
