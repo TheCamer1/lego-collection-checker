@@ -1,4 +1,5 @@
 ﻿using LegoCollectionChecker.Common;
+using System.Drawing;
 using System.Text;
 
 namespace LegoCollectionChecker.PieceChecker;
@@ -30,10 +31,20 @@ public class PieceLocator
 
     public string GetExcess(string itemId, int colorId, bool ignoreColour = false)
     {
-        var name = colourMap.GetNameById(colorId);
-        var color = colourMap.GetEnumById(colorId);
-
         var sb = new StringBuilder();
+
+        GetExcess(itemId, colorId, sb, ignoreColour);
+
+        var color = colourMap.GetEnumById(colorId);
+        sb.Insert(0, $"Piece {itemId} in {color}\r\n\r\n");
+
+        return sb.ToString();
+    }
+
+    public int GetExcess(string itemId, int colorId, StringBuilder sb, bool ignoreColour = false)
+    {
+        var name = colourMap.GetNameById(colorId);
+
         sb.AppendLine();
         var collectionAmounts = DisplayCompleteCollectionAmounts(itemId, name!, colorId, ignoreColour, sb);
         sb.AppendLine();
@@ -44,18 +55,15 @@ public class PieceLocator
         sb.AppendLine();
         if (ignoreColour)
         {
-            PrintMissingByColour(completeAmounts, incompleteAmounts, collectionAmounts, sb);
+            return PrintMissingByColour(completeAmounts, incompleteAmounts, collectionAmounts, sb);
         }
         else
         {
-            PrintMissing(colorId, completeAmounts, incompleteAmounts, collectionAmounts, sb);
+            return PrintMissing(colorId, completeAmounts, incompleteAmounts, collectionAmounts, sb);
         }
-        sb.Insert(0, $"Piece {itemId} in {color}\r\n\r\n");
-
-        return sb.ToString();
     }
 
-    private void PrintMissing(
+    private int PrintMissing(
         int colorId,
         Dictionary<int, int> completeAmounts,
         Dictionary<int, int> incompleteAmounts,
@@ -80,9 +88,10 @@ public class PieceLocator
                 sb.Insert(0, $"Missing: {Math.Min(-excessAmount, incomplete)}\r\n");
             }
         }
+        return excessAmount;
     }
 
-    private void PrintMissingByColour(
+    private int PrintMissingByColour(
         Dictionary<int, int> completeAmounts,
         Dictionary<int, int> incompleteAmounts,
         Dictionary<int, int> collectionAmounts,
@@ -150,6 +159,7 @@ public class PieceLocator
         {
             sb.Insert(0, $"EXCESS TOTAL: {total}\r\n");
         }
+        return total;
     }
 
     private Dictionary<int, int> DisplayCompleteCollectionAmounts(

@@ -9,10 +9,10 @@ public static class WantedListDeterminer
     {
         // Load the collection
         var pieces = CollectionLoader.LoadCollection($"../../../{outputFileName}.xml");
-        var completeCollection = CollectionLoader.LoadCollection("../../../../Common/CompleteCollection.xml");
+        var pieceLocator = new PieceLocator();
 
         var results = pieces
-            .Select(e => new { Piece = e.Value, Excess = PieceLocator.GetExcess(completeCollection, e.Value.ItemId, e.Value.Color) })
+            .Select(e => new { Piece = e.Value, Excess = pieceLocator.GetExcess(e.Value.ItemId, e.Value.Color, new(), false) })
             .Where(e => e.Excess < 0);
 
         var missingPieces = new List<LegoPiece>();
