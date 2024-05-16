@@ -1,11 +1,10 @@
-﻿using LegoCollectionChecker.Common;
-
-namespace LegoCollectionChecker.WantedListCombiner;
+﻿namespace LegoCollectionChecker.WantedListCombiner;
 
 class Program
 {
     static void Main()
     {
-        WantedListCombiner.GenerateCombinedList();
+        //WantedListCombiner.GenerateCombinedList();
+        WantedListCombiner.GenerateCombinedList(["../../../../Common/CompleteCollection.xml", "../../../Jooooy.xml"]);
     }
 }

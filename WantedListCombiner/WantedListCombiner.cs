@@ -6,10 +6,25 @@ public static class WantedListCombiner
 {
     public static void GenerateCombinedList()
     {
-        Dictionary<string, LegoPiece> masterList = new();
-
         // Get all XML files in the folder
         var files = Directory.GetFiles("../../../../Common/MissingModels", "*.xml");
+        Dictionary<string, LegoPiece> masterList = CombineFiles(files);
+
+        // Generate the combined XML file
+        FileGenerator.GenerateFile(masterList.Values, "../../../AllMissing.xml");
+    }
+
+    public static void GenerateCombinedList(string[] files)
+    {
+        Dictionary<string, LegoPiece> masterList = CombineFiles(files);
+
+        // Generate the combined XML file
+        FileGenerator.GenerateFile(masterList.Values, "../../../CombinedFiles.xml");
+    }
+
+    private static Dictionary<string, LegoPiece> CombineFiles(string[] files)
+    {
+        Dictionary<string, LegoPiece> masterList = [];
 
         foreach (var file in files)
         {
@@ -20,10 +35,9 @@ public static class WantedListCombiner
             foreach (var piece in currentCollection.Values)
             {
                 var key = piece.GetKey();
-                if (masterList.ContainsKey(key))
+                if (masterList.TryGetValue(key, out LegoPiece? value))
                 {
-                    // If the item already exists, sum up the quantities
-                    masterList[key].Quantity += piece.Quantity;
+                    value.Quantity += piece.Quantity;
                 }
                 else
                 {
@@ -33,7 +47,6 @@ public static class WantedListCombiner
             }
         }
 
-        // Generate the combined XML file
-        FileGenerator.GenerateFile(masterList.Values, "../../../AllMissing.xml");
+        return masterList;
     }
 }
