@@ -8,7 +8,7 @@ public static class WantedListDeterminer
     public static void ProcessWantedList(string outputFileName)
     {
         // Load the collection
-        var pieces = CollectionLoader.LoadCollection($"../../../{outputFileName}.xml");
+        var pieces = CollectionLoader.LoadCollection($"../../../../Common/IncompleteModels/{outputFileName}.xml");
         var pieceLocator = new PieceLocator();
 
         var results = pieces
