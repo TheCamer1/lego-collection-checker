@@ -16,7 +16,7 @@ public static class MissingPieceGenerator
 
     public static void GenerateMissingPieces()
     {
-        var completeCollection = CollectionLoader.LoadCollection("../../../../Common/CompleteCollection.xml");
+        var completeCollection = CollectionLoader.LoadCollection("../../../../Common/Complete Collection.xml");
 
         // process completed models
         foreach (var file in Directory.GetFiles("../../../../Common/CompletedModels", "*.xml"))
