@@ -5,6 +5,6 @@ class Program
     static void Main()
     {
         //WantedListCombiner.GenerateCombinedList();
-        WantedListCombiner.GenerateCombinedList(["../../../../Common/CompleteCollection.xml", "../../../Jooooy.xml"]);
+        WantedListCombiner.GenerateCombinedList(["../../../../Common/Complete Collection.xml", "../../../Jooooy.xml"]);
     }
 }

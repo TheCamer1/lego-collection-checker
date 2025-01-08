@@ -22,7 +22,7 @@ public class PieceLocator : IPieceLocator
     public PieceLocator()
     {
         var stopwatch = Stopwatch.StartNew();
-        completeCollection = CollectionLoader.LoadCollection("../Common/CompleteCollection.xml");
+        completeCollection = CollectionLoader.LoadCollection("../Common/Complete Collection.xml");
         completeModels = LoadModels("../Common/CompletedModels");
         incompleteModels = LoadModels("../Common/IncompleteModels");
         colourMap = new ColourMap();
