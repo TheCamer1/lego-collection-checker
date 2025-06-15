@@ -4,6 +4,6 @@ class Program
 {
     static void Main()
     {
-        WantedListManager.ProcessWantedList("Drogon");
+        WantedListManager.ProcessWantedList("Upsilon Command Shuttle");
     }
 }

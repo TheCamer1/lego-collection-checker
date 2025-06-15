@@ -387,3 +387,6 @@ FodyWeavers.xsd
 # JetBrains Rider
 .idea/
 *.sln.iml
+
+combine-files.ps1
+*-concatenated.md

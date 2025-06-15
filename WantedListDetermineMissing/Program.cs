@@ -4,6 +4,6 @@ class Program
 {
     static void Main()
     {
-        WantedListDeterminer.ProcessWantedList("Octuptarra");
+        WantedListDeterminer.ProcessWantedList("Thrawn's Chimaera");
     }
 }
