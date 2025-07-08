@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using LegoCollectionChecker.Common;
+using LegoCollectionChecker.IOConverter;
 
 namespace LegoCollectionChecker.GoBricksConverter;
 
@@ -50,7 +51,7 @@ public static class CsvToXmlConverter
             try
             {
                 var partId = parts[0].Trim();
-                var colorString = parts[1].Trim();
+                var colorString = parts[1].Trim().Replace("\'", "");
                 var quantity = int.Parse(parts[2].Trim());
                 // parts[3] is empty
                 var goBrickPart = parts[4].Trim();
@@ -58,12 +59,12 @@ public static class CsvToXmlConverter
 
                 // Get LDraw color from GoBrick color
                 int? colorCode = null;
-                if (goBrickColor != "N^")
+                if (colorString != "N^")
                 {
-                    colorCode = GoBrickColorMap.GetLDrawColor(goBrickColor);
+                    colorCode = IOColorMap.GetLDrawColor(colorString);
                     if (colorCode == null)
                     {
-                        Console.WriteLine($"Warning: Unknown GoBrick color '{goBrickColor}' on line {i + 1}, part {partId}");
+                        Console.WriteLine($"Warning: Unknown GoBrick color '{colorString}' on line {i + 1}, part {partId}");
                     }
                 }
 
