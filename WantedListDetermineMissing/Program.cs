@@ -4,6 +4,6 @@ class Program
 {
     static void Main()
     {
-        WantedListDeterminer.ProcessWantedList("Tydirium Shuttle");
+        WantedListDeterminer.ProcessWantedList("Bo-Katan Mandalorian Gauntlet Starfighter");
     }
 }
