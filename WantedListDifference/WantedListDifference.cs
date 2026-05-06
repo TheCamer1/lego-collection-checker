@@ -7,8 +7,8 @@ public static class WantedListDifference
     public static void ProcessWantedList(string originalFileName, string subtractorFileName)
     {
         // Load the collections
-        var originalPieces = CollectionLoader.LoadCollection($"../../../{originalFileName}.xml");
-        var subtractorPieces = CollectionLoader.LoadCollection($"../../../{subtractorFileName}.xml");
+        var originalPieces = CollectionLoader.LoadCollection(RepoPaths.Project("WantedListDifference", $"{originalFileName}.xml"));
+        var subtractorPieces = CollectionLoader.LoadCollection(RepoPaths.Project("WantedListDifference", $"{subtractorFileName}.xml"));
 
         // Create a list to hold the keys of the pieces that will have a quantity of 0
         List<string> keysToRemove = new List<string>();
@@ -35,6 +35,6 @@ public static class WantedListDifference
         }
 
         // Generate a new XML file with the filtered list
-        FileGenerator.GenerateFile(originalPieces.Values, $"../../../{originalFileName}Subtracted.xml");
+        FileGenerator.GenerateFile(originalPieces.Values, RepoPaths.Project("WantedListDifference", $"{originalFileName}Subtracted.xml"));
     }
 }

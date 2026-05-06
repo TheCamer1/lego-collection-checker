@@ -1,10 +1,15 @@
-﻿namespace LegoCollectionChecker.WantedListCombiner;
+﻿using LegoCollectionChecker.Common;
+
+namespace LegoCollectionChecker.WantedListCombiner;
 
 class Program
 {
     static void Main()
     {
         //WantedListCombiner.GenerateCombinedList();
-        WantedListCombiner.GenerateCombinedList(["../../../../Common/Complete Collection.xml", "../../../Jooooy.xml"]);
+        WantedListCombiner.GenerateCombinedList([
+            RepoPaths.CompleteCollection,
+            RepoPaths.Project("WantedListCombiner", "Jooooy.xml")
+        ]);
     }
 }

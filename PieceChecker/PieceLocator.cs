@@ -22,9 +22,9 @@ public class PieceLocator : IPieceLocator
     public PieceLocator()
     {
         var stopwatch = Stopwatch.StartNew();
-        completeCollection = CollectionLoader.LoadCollection("../Common/Complete Collection.xml");
-        completeModels = LoadModels("../Common/CompletedModels");
-        incompleteModels = LoadModels("../Common/IncompleteModels");
+        completeCollection = CollectionLoader.LoadCollection(RepoPaths.CompleteCollection);
+        completeModels = LoadModels(RepoPaths.CompletedModels);
+        incompleteModels = LoadModels(RepoPaths.IncompleteModels);
         colourMap = new ColourMap();
         stopwatch.Stop();
         Console.WriteLine($"PieceLocator constructor: {stopwatch.ElapsedMilliseconds} ms");

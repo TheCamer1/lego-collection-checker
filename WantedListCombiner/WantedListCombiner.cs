@@ -7,11 +7,11 @@ public static class WantedListCombiner
     public static void GenerateCombinedList()
     {
         // Get all XML files in the folder
-        var files = Directory.GetFiles("../../../../Common/MissingModels", "*.xml");
+        var files = Directory.GetFiles(RepoPaths.MissingModels, "*.xml");
         Dictionary<string, LegoPiece> masterList = CombineFiles(files);
 
         // Generate the combined XML file
-        FileGenerator.GenerateFile(masterList.Values, "../../../AllMissing.xml");
+        FileGenerator.GenerateFile(masterList.Values, RepoPaths.Project("WantedListCombiner", "AllMissing.xml"));
     }
 
     public static void GenerateCombinedList(string[] files)
@@ -19,7 +19,7 @@ public static class WantedListCombiner
         Dictionary<string, LegoPiece> masterList = CombineFiles(files);
 
         // Generate the combined XML file
-        FileGenerator.GenerateFile(masterList.Values, "../../../CombinedFiles.xml");
+        FileGenerator.GenerateFile(masterList.Values, RepoPaths.Project("WantedListCombiner", "CombinedFiles.xml"));
     }
 
     private static Dictionary<string, LegoPiece> CombineFiles(string[] files)

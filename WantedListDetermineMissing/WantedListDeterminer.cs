@@ -8,7 +8,7 @@ public static class WantedListDeterminer
     public static void ProcessWantedList(string outputFileName)
     {
         // Load the collection
-        var pieces = CollectionLoader.LoadCollection($"../../../../Common/IncompleteModels/{outputFileName}.xml");
+        var pieces = CollectionLoader.LoadCollection(Path.Combine(RepoPaths.IncompleteModels, $"{outputFileName}.xml"));
         var pieceLocator = new PieceLocator();
 
         var results = pieces
@@ -25,6 +25,6 @@ public static class WantedListDeterminer
         }
 
         // Generate a new XML file with the filtered list
-        FileGenerator.GenerateFile(missingPieces, $"../../../{outputFileName}Missing.xml");
+        FileGenerator.GenerateFile(missingPieces, RepoPaths.Project("WantedListDetermineMissing", $"{outputFileName}Missing.xml"));
     }
 }
